@@ -1,0 +1,25 @@
+// Place all the styles related to the Highscores controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+body {
+}
+
+#quote-display {
+    background: -webkit-linear-gradient(right, #C2FFE6 0%, #FFC2DB 100%); /* For Safari */
+    background: -o-linear-gradient(left, #C2FFE6 0%, #FFC2DB 100%); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(left, #C2FFE6 0%, #FFC2DB 100%); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to left, #C2FFE6 0%, #FFC2DB 100%); /* Standard syntax */
+    border-radius: 10px;
+    box-shadow: -1px -1px #A3A3A3 inset;
+}
+
+
+.hidden {
+    display: none;
+}
+
+.showable {
+	  display: none;
+}
