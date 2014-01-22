@@ -1,6 +1,22 @@
-<h1>Editing quote</h1>
+<style type="text/css">
+  body {
+    background-color: #C2FFE6;
+  }
+</style>
 
-<%= render 'form' %>
-
-<%= link_to 'Show', @quote %> |
-<%= link_to 'Back', quotes_path %>
+<div class="row">
+	<div class="col-md-11 col-md-offset-1">
+		<h1 class="stamp"><%= link_to "I didn't say most of the things I said.", root_path %></h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-11 col-md-offset-1">
+		<%= render 'form' %>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-11 col-md-offset-1">
+		<%= link_to 'Show', @quote %> |
+		<%= link_to 'Back', quotes_path %>
+	</div>
+</div>
