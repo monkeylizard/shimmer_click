@@ -1,5 +1,7 @@
-var highscore_script = function() {
+/*
 
+window.onload = function() {
+	$(document).ready(function(){
 	// generates a random number in an inclusive range
 	
 	var rand_int = function(low, high) {
@@ -470,7 +472,10 @@ var highscore_script = function() {
 	coords = coord_maker(quote); //declared above	
 	draw_sentence(quote);
 	place_supplement(attr, "attribution");
-//	$("#quote-display").bind('click', function() {
-//	    complete();
-//	});
+	if ( $("#reload").html() == "true" ) {
+		$(".showable").show();
+		$("#typing-box").hide();
+	}
+	});
 }
+*/
