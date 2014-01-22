@@ -1,5 +1,4 @@
-window.onload = function() {
-    $(document).ready(function() {
+var highscore_script = function() {
 
 	// generates a random number in an inclusive range
 	
@@ -140,10 +139,10 @@ window.onload = function() {
 		max = typed.length;
 	    }
 	    for ( i = typed.length; i < max; i++ ) {
-		a = get_let("A" + i.toString());
-		w = get_let("W" + i.toString());
-		if ( a ) { unfill_let("A" + i.toString()); }
-		if ( w ) { kill_let(w); }
+		aa = get_let("A" + i.toString());
+		ww = get_let("W" + i.toString());
+		if ( aa ) { unfill_let("A" + i.toString()); }
+		if ( ww ) { kill_let(ww); }
 	    }
 	}
 
@@ -307,7 +306,7 @@ window.onload = function() {
 	    // spacing is now global
 	    if ( isMobile ) { spacing = 18; }
 	    
-	    var endl = w;
+	    var endl = w - buf;
 	    
 	    var breaks = [0];
 	    var check = true;
@@ -442,13 +441,16 @@ window.onload = function() {
 		.duration(2200)
 		.attr("fill", complete_attr);
 	    spd = get_let("wpm-display")
+    	spd_place = Math.floor(w/2 - buf * 1.5);
+    	console.log("WIDTH", w, spd_place);
 	    if ( spd ) {
 		spd.transition()
 		    .delay(1700)
 		    .duration(1000)
-		    .attr("x", w/2 - buf * 2)
+		    .attr("x", spd_place)
 		    .attr("fill", "white");
 	    }
+	    setTimeout(function() {$("#typing-box").hide("slow"); }, 500);
 	    setTimeout(function() {ready_submit(); }, 1750);
 	}
 
@@ -472,6 +474,4 @@ window.onload = function() {
 	$("#quote-display").bind('click', function() {
 	    complete();
 	});
-
-    });
 }

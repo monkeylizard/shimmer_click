@@ -12,15 +12,19 @@
   <% end %>
 
 
-  <div class="field hidden">
+
+<div class="form-inline showable">
+  <div class="form-group field hidden score-form">
     <%= f.label :score %><br>
     <%= f.text_field :score %>
   </div>
-  <div class="field showable" id="name">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
+  <div class="form-group field showable score-form" id="name">
+    <span class="hidden"><%= f.label :name %></span>
+    <%= f.text_field :name, { :class => "form-control", :placeholder => "Enter your name" } %>
   </div>
-  <div class="actions showable" id="submit">
-    <%= f.submit "Submit score"  %>
+  <div class="form-group actions showable score-form" id="submit">
+    <%= f.submit "Submit score", { :class => "btn btn-and" } %>
   </div>
 <% end %>
+</div>
+

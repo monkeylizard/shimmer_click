@@ -1,6 +1,87 @@
 @import "bootstrap";
-@import "bootstrap-responsive";
 
+html,
 body {
-    padding: 60px;
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
 }
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -250px;
+  /* Pad bottom by footer height */
+  padding: 60px 60px 250px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  text-align: right;
+  height: 250px;
+  background-color: #FF0000;
+  color: white;
+}
+
+#wrap > .container {
+  padding: 60px 15px 0;
+}
+.container p {
+  margin: 20px 30px;
+}
+
+#footer > .container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+
+.shimmer {
+	color: #C2FFE6;
+}
+
+.click {
+	color: #FFC2DB;
+}
+
+.and {
+	color: #FFEC80;
+	color: #FFAE00;
+}
+
+.navbar-right {
+	padding-right: 2em;
+}
+
+
+a:hover {
+	.shimmer {
+		color: #FFC2DB;
+	}
+	.click {
+		color: #C2FFE6;
+	}
+	.and {
+		display: none;
+	}
+}
+
+
+.btn-and {
+  background-color: hsl(41, 100%, 47%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffb619", endColorstr="#efa300");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#ffb619), to(#efa300));
+  background-image: -moz-linear-gradient(top, #ffb619, #efa300);
+  background-image: -ms-linear-gradient(top, #ffb619, #efa300);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffb619), color-stop(100%, #efa300));
+  background-image: -webkit-linear-gradient(top, #ffb619, #efa300);
+  background-image: -o-linear-gradient(top, #ffb619, #efa300);
+  background-image: linear-gradient(#ffb619, #efa300);
+  border-color: #efa300 #efa300 hsl(41, 100%, 45%);
+  color: #333 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.13);
+  -webkit-font-smoothing: antialiased;
+}
+

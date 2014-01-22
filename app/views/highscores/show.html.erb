@@ -7,8 +7,8 @@
 
 <p>
   <strong>Score:</strong>
-  <%= @highscore.score %>
+  <%= "#{@highscore.score} WPM" %>
 </p>
 
-<%= link_to 'Edit', edit_highscore_path(@highscore) %> |
-<%= link_to 'Back', highscores_path %>
+<%= link_to 'Home', root_path %> |
+<%= link_to 'New game', game_path %>

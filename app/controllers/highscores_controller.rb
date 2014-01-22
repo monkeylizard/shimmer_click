@@ -4,7 +4,7 @@ class HighscoresController < ApplicationController
   # GET /highscores
   # GET /highscores.json
   def index
-    @highscores = Highscore.all
+    @highscores = Highscore.order(score: :desc)
   end
 
   # GET /highscores/1
@@ -29,7 +29,7 @@ class HighscoresController < ApplicationController
 
     respond_to do |format|
       if @highscore.save
-        format.html { redirect_to @highscore, notice: 'Highscore was successfully created.' }
+        format.html { redirect_to @highscore, notice: 'Your score has been saved!' }
         format.json { render action: 'show', status: :created, location: @highscore }
       else
         format.html { render action: 'new' }

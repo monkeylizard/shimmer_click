@@ -1,24 +1,40 @@
-<h1>Shimmer & Click</h1>
-
-<div id="quote-display"></div>
-<br>
-<input type="text" id="typing-box">
-
-
-
 <div class="hidden">
-<div id="wpm"></div>
-<% quote_count = 0 %>
-<% @quote.each do |quote| %>
-  <p id="<%= "quote#{quote_count}" %>"><%= quote.content %></p>
-  <p id="<%= "attr#{quote_count}" %>"><%= quote.attribution %></p>
-  <% quote_count += 1 %>
-<% end %>
-  <div id="numquotes"><%= quote_count %></div>
-  <div id="timer"></div>
-  <div id="complete"></div>
+  	<div id="page_name">Game</div>
 </div>
-  <%= render 'form' %>
 
 
-<%= link_to 'Back', highscores_path %>
+	<div class="row">
+		<div class="col-md-6">
+			<h1><%= link_to root_path do%>
+				<%= render 'layouts/logo' %>
+			<% end %>
+			</h1>
+		</div>
+		<div class="col-md-4 col-md-offset-2">
+			<h3><small>type when ready, commander!</small></h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div id="quote-display"></div>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-9 col-md-offset-1">
+			<textarea class="form-control" id="typing-box" rows="3"></textarea>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-10 col-md-offset-2">
+			<div class="hidden">
+				<div id="wpm"></div>
+				<%= render 'quotelist' %>
+  				<div id="timer"></div>
+  				<div id="complete"></div>
+			</div>
+			<%= render 'form' %>
+		</div>
+	</div>

@@ -1,0 +1,7 @@
+<% quote_count = 0 %>
+<% @quote.each do |quote| %>
+	<p id="<%= "quote#{quote_count}" %>"><%= quote.content %></p>
+  	<p id="<%= "attr#{quote_count}" %>"><%= quote.attribution %></p>
+  	<% quote_count += 1 %>
+<% end %>
+<div id="numquotes"><%= quote_count %></div>
