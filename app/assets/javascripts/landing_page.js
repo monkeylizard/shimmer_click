@@ -250,11 +250,16 @@ var landing_script = function() {
 
 window.onload = function() {
 	$(document).ready(function(){
+		console.log("Hello!");
 		nm = $("#page_name").html();
 		if (nm == "Home") {
 			landing_script();
 		} else if (nm == "Game") {
 			highscore_script();
+		}
+		if ( $("#reload").html() == "true" ) {
+			$(".showable").show();
+			$("#typing-box").hide();
 		}
 	});
 }

@@ -17,9 +17,11 @@ class QuotesController < ApplicationController
     @quote = Quote.new
   end
 
+
   # GET /quotes/1/edit
   def edit
   end
+
 
   # POST /quotes
   # POST /quotes.json
@@ -36,6 +38,7 @@ class QuotesController < ApplicationController
       end
     end
   end
+
 
   # PATCH/PUT /quotes/1
   # PATCH/PUT /quotes/1.json
@@ -60,6 +63,7 @@ class QuotesController < ApplicationController
       format.json { head :no_content }
     end
   end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

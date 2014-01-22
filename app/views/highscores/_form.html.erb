@@ -1,14 +1,16 @@
 <%= form_for(@highscore, :html => { :role => "form", :class => "form-inline"}) do |f| %>
   <% if @highscore.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@highscore.errors.count, "error") %> prohibited this highscore from being saved:</h2>
-
+      <div class="alert alert-danger">
+        <%= pluralize(@highscore.errors.count, "error") %> prevented this highscore from being saved:
+      </div>
       <ul>
       <% @highscore.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+        <li>* <%= msg %></li>
       <% end %>
       </ul>
     </div>
+    <div id="reload" class="hidden">true</div>
   <% end %>
 
 

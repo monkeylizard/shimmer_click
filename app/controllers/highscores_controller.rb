@@ -18,13 +18,16 @@ class HighscoresController < ApplicationController
     @highscore = Highscore.new
   end
 
+
   # GET /highscores/1/edit
   def edit
   end
 
+
   # POST /highscores
   # POST /highscores.json
   def create
+    @quote = Quote.all
     @highscore = Highscore.new(highscore_params)
 
     respond_to do |format|
@@ -37,6 +40,7 @@ class HighscoresController < ApplicationController
       end
     end
   end
+
 
   # PATCH/PUT /highscores/1
   # PATCH/PUT /highscores/1.json
@@ -61,6 +65,7 @@ class HighscoresController < ApplicationController
       format.json { head :no_content }
     end
   end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
