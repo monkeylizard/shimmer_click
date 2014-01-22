@@ -470,7 +470,7 @@ var highscore_script = function() {
 	coords = coord_maker(quote); //declared above	
 	draw_sentence(quote);
 	place_supplement(attr, "attribution");
-	$("#quote-display").bind('click', function() {
-	    complete();
-	});
+//	$("#quote-display").bind('click', function() {
+//	    complete();
+//	});
 }
