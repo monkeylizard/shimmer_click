@@ -1,14 +1,38 @@
-<p id="notice"><%= notice %></p>
+<style type="text/css">
+  body {
+    background-color: #FFC2DB;
+  }
+</style>
 
-<p>
-  <strong>Name:</strong>
-  <%= @highscore.name %>
-</p>
-
-<p>
-  <strong>Score:</strong>
-  <%= "#{@highscore.score} WPM" %>
-</p>
-
-<%= link_to 'Home', root_path %> |
-<%= link_to 'New game', game_path %>
+<% if notice %>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="alert alert-success"><%= notice %></div>
+			</div>
+		</div>
+<% end %>
+<div class="row">
+	<div class="col-md-9 col-md-offset-1">
+    	<table class="table table-striped">
+      		<thead class="stamp">
+        		<tr>
+          			<th>Name</th>
+          			<th>Score</th>
+        		</tr>
+      		</thead>
+      		<tbody>
+	          	<tr>
+            		<td class="stamp"><%= @highscore.name %></td>
+            		<td class="stamp"><%= @highscore.score %></td>
+          		</tr>
+    	    </tbody>
+    	</table>		
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-11 col-md-offset-1">
+		<%= link_to 'Home', root_path %> |
+		<%= link_to 'High Scores', scores_path %> |
+		<%= link_to 'New game', game_path %>
+	</div>
+</div>
