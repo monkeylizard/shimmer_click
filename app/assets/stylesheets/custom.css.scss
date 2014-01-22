@@ -20,8 +20,10 @@ body {
 #footer {
   text-align: right;
   height: 250px;
-  background-color: #FF0000;
-  color: white;
+  background-color: #1F054D;
+  a {
+  	color: white;
+  }
 }
 
 #wrap > .container {
@@ -36,6 +38,11 @@ body {
   padding-right: 15px;
 }
 
+.stamp {
+	font-family: "Courier New";
+	font-weight: "bolder";
+}
+
 
 .shimmer {
 	color: #C2FFE6;
@@ -46,7 +53,6 @@ body {
 }
 
 .and {
-	color: #FFEC80;
 	color: #FFAE00;
 }
 
@@ -68,6 +74,7 @@ a:hover {
 }
 
 
+
 .btn-and {
   background-color: hsl(41, 100%, 47%) !important;
   background-repeat: repeat-x;
@@ -84,4 +91,5 @@ a:hover {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.13);
   -webkit-font-smoothing: antialiased;
 }
+
 

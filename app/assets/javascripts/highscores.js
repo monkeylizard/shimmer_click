@@ -228,13 +228,13 @@ var highscore_script = function() {
 		.enter()
 		.append("text")
 		.attr("id", name)
-		.attr("x", coord[0] + 5)
-		.attr("y", coord[1] + 5)
+		.attr("x", coord[0] + 3)
+		.attr("y", coord[1] + 3)
 		.text(letter)
-		.attr("font-family", "serif")
+		.attr("font-family", "Courier New")
 		.attr("font-weight", "bold")
 		.attr("font-size", size)
-		.attr("fill", "red");
+		.attr("fill", "#C40C24");
 	    
 	    return lett;
 	}
@@ -413,8 +413,7 @@ var highscore_script = function() {
 
 	var display_complete = function() {
 	    flash_color = "#00FBFF";
-	    complete_color = "#67008A" //"#0E9E9B";
-	    complete_attr = "#67008A" //"#E67E80";
+	    complete_color = "#67008A"
 	    for ( i = 0; i < quote.length; i++ ) {
 		bad = get_let("W" + i);
 		if ( bad ) {
@@ -439,7 +438,7 @@ var highscore_script = function() {
 	    attribution.transition()
 		.delay(850)
 		.duration(2200)
-		.attr("fill", complete_attr);
+		.attr("fill", complete_color);
 	    spd = get_let("wpm-display")
     	spd_place = Math.floor(w/2 - buf * 1.5);
     	console.log("WIDTH", w, spd_place);
@@ -448,7 +447,7 @@ var highscore_script = function() {
 		    .delay(1700)
 		    .duration(1000)
 		    .attr("x", spd_place)
-		    .attr("fill", "white");
+		    .attr("fill", "#FFAE00");
 	    }
 	    setTimeout(function() {$("#typing-box").hide("slow"); }, 500);
 	    setTimeout(function() {ready_submit(); }, 1750);

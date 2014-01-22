@@ -1,4 +1,4 @@
-<%= form_for(@quote) do |f| %>
+<%= form_for(@quote, :html => {:role => "form"}) do |f| %>
   <% if @quote.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@quote.errors.count, "error") %> prohibited this quote from being saved:</h2>
@@ -11,15 +11,15 @@
     </div>
   <% end %>
 
-  <div class="field">
+  <div class="field form-group">
     <%= f.label :content %><br>
-    <%= f.text_field :content %>
+    <%= f.text_area :content, { :class => "form-control", :rows => "4" } %>
   </div>
-  <div class="field">
+  <div class="field form-group">
     <%= f.label :attribution %><br>
-    <%= f.text_field :attribution %>
+    <%= f.text_field :attribution, { :class => "form-control"} %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
+  <div class="actions form-group">
+    <%= f.submit "Submit quote", { :class => "btn btn-and"} %>
   </div>
 <% end %>

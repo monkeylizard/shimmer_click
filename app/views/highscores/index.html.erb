@@ -1,29 +1,42 @@
-<h1>Listing highscores</h1>
+<style type="text/css">
+  body {
+    background-color: #FFC2DB;
+  }
+</style>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Score</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <% @highscores.each do |highscore| %>
-      <tr>
-        <td><%= highscore.name %></td>
-        <td><%= highscore.score %></td>
-        <td><%= link_to 'Show', highscore %></td>
-        <td><%= link_to 'Edit', edit_highscore_path(highscore) %></td>
-        <td><%= link_to 'Destroy', highscore, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
+<div class="row">
+  <div class="col-md-11 col-md-offset-1">
+    <h1 class="stamp">Very Best Typers</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-9 col-md-offset-1">
+    <table class="table table-striped">
+      <thead class="stamp">
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% score_count = 0 %>
+        <% @highscores.each do |highscore| %>
+          <tr>
+            <td class="stamp"><%= score_count + 1 %></td>
+            <td class="stamp"><%= highscore.name %></td>
+            <td class="stamp"><%= highscore.score %></td>
+          </tr>
+          <% score_count += 1 %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
 <br>
-
-<%= link_to 'New Highscore', new_highscore_path %>
+<div class="row">
+  <div class="col-md-11 col-md-offset-1">
+    <%= link_to 'Back', root_path %>
+  </div>
+</div>

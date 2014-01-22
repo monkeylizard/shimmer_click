@@ -1,29 +1,37 @@
-<h1>Listing quotes</h1>
+<style type="text/css">
+  body {
+    background-color: #C2FFE6;
+  }
+</style>
 
-<table>
-  <thead>
-    <tr>
-      <th>Content</th>
-      <th>Attribution</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <h1 class="stamp">Every One of Them Words Rang True</h1>
+  </div>
+  <div class="col-md-1"></div>
+</div>
 
-  <tbody>
-    <% @quotes.each do |quote| %>
-      <tr>
-        <td><%= quote.content %></td>
-        <td><%= quote.attribution %></td>
-        <td><%= link_to 'Show', quote %></td>
-        <td><%= link_to 'Edit', edit_quote_path(quote) %></td>
-        <td><%= link_to 'Destroy', quote, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<% @quotes.each do |quote| %>
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <br>
+      <p><%= quote.content %></p>
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-10 col-md-offset-2">
+      <p><%= quote.attribution %></p>
+    </div>
+  </div>
+<% end %>
 
 <br>
-
-<%= link_to 'New Quote', new_quote_path %>
+<div class="row">
+  <div class="col-md-2 col-md-offset-1">
+    <%= link_to 'Back', root_path %>
+  </div>
+  <div class="col-md-8 text-right">
+    <%= link_to 'Submit a Quote', new_quote_path %>
+  </div>
+</div>

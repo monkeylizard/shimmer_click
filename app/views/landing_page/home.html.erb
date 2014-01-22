@@ -9,30 +9,30 @@
 		</div>
 		<div class="col-md-4 col-md-offset-4 text-right">
 			<h1><small>
-				Very Best Typers
+				<%= link_to "Very Best Typers", scores_path, { :class => "stamp" } %>
 			</small></h1>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-8" id="quote-snippets"></div>
 		<div class="col-md-4" id="scores-list">
-			<table class="table">
-				<th>Place</th>
+			<table class="table stamp">
+				<th>Rank</th>
 				<th>Name</th>
 				<th>Score</th>
 				<% score_count = 0 %>
 				<% @highscores.each do |highscore| %>
 					<tr>
-						<td><%= score_count + 1 %></td>
-						<td><%= highscore.name %></td>
-						<td><%= highscore.score %></td>
+						<td class="stamp"><%= score_count + 1 %></td>
+						<td class="stamp"><%= highscore.name %></td>
+						<td class="stamp"><%= highscore.score %></td>
 					</tr>
 					<% score_count += 1 %>
 					<% break if score_count > 4 %>
 				<% end %>
 			</table>
 			<div class="text-right">
-				<%= link_to "see all scores", scores_path %>
+				<%= link_to "see all scores", scores_path, { :class => "stamp" } %>
 			</div>
 		</div>
 	</div>
