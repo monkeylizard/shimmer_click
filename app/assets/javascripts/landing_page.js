@@ -738,7 +738,7 @@ var start = function() {
 	}
 }
 
-$(window).load(function() {
+$(document).ready(function() {
 	console.log("START THIS");
 	setTimeout(start(), 500);
 });
