@@ -225,29 +225,81 @@ var landing_script = function() {
 	}
 
 	var display_bit = function(iterate) {
+		console.log(iterate, snippets[iterate]);
 		draw_sentence(snippets[iterate]);
 		place_supplement(attributions[iterate], "attribution");
 	}
 
 	var kill_bit = function(iterate) {
-		kill_sentence(snippets[iterate]);
-		kill_let(get_let("attribution"));
+		safe = $("#page_name").html();
+		if ( safe == "Home" ) {
+			kill_sentence(snippets[iterate]);
+			kill_let(get_let("attribution"));
+		}
 	}
 
 	var show_kill = function(iterate) {
+		console.log("show_kill called");
 		display_bit(iterate);
 		setTimeout(function() { kill_bit(iterate); }, 10000);
 		return (iterate + 1) % snippets.length;
 	}
 
+	// timekeeping
 
-	iterate = rand_int(0, snippets.length-1);
-	iterate = show_kill(iterate);
+	var mark_time = function() {
+	    var last_time = new Date();
+	    var time_div = document.getElementById("timer");
+	    time_div.innerHTML = last_time.getTime();
+	    return time_div.innerHTML;
+	}
+	
+	var get_time = function() {
+	    var time_div = document.getElementById("timer");
+	    return time_div.innerHTML
+	}
+	
+	var what_time = function() {
+	    var this_time = new Date();
+	    return this_time.getTime();
+	}	
 
+	var show_kill_time = function(iterate) {
+		console.log("show_kill_time called");
+		now = what_time();
+		then = get_time();
+		console.log(now - then);
+		if ( now - then >= 10000 ) {
+			mark_time();
+			return show_kill(iterate);
+		}
+	}
 
+	var is_display = function() {
+		aaa = get_let("A1");
+		return aaa;
+	}
+
+	var iterate = rand_int(0, snippets.length-1);
+	mark_time();
+
+	var cycle = function () {
+		console.log("cycling", iterate);
+		safety = $("#page_name").html();
+		if ( safety == "Home" ) {
+			itt = show_kill(iterate)
+			if  ( typeof(itt) === "number" ) {
+				iterate = itt;
+			}
+		}
+	}
+
+	cycle();
 	setInterval(function() {
-		iterate = show_kill(iterate);
+		console.log("looping");
+		cycle();
 	}, 11000);
+
 }
 
 var highscore_script = function() {	
@@ -739,8 +791,7 @@ var start = function() {
 }
 
 $(document).ready(function() {
-	console.log("START THIS");
-	setTimeout(start(), 500);
+	start();
 });
 
 
