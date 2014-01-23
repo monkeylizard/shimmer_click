@@ -371,19 +371,20 @@ var highscore_script = function() {
 	    var start = $("#timer").html();
 	    var elapsed = time() - start;
 	    var typed = $("#typing-box").val();
-	    console.log(typed);
 	    var words = typed.split(" ").length;
 	    var wpm = (words * 60) / (elapsed / 1000);
 	    return wpm;
 	}
 	
-	var typed_matches = function() {
-	    var typed = $("#typing-box").val();
+	var typed_matches = function(typed) {
+		if ( !typed ) {
+		    var typed = $("#typing-box").val();	
+		}
 	    var compare_to = quote.substring(0,typed.length);
 	    if (typed === compare_to) {
-		return true;
+			return true;
 	    } else {
-		return false;
+	    	return false;
 	    }
 	}
 	
@@ -413,23 +414,31 @@ var highscore_script = function() {
 
 	// function to fill in typed letters and red incorrect ones
 
-	var colorify = function() {
-	    var typed = $("#typing-box").val();
-	    if ( typed_matches() ) {
-		for ( i = 0; i < typed.length; i++ ) {
-		    fill_let("A" + i.toString());
-		}
+	var filled_in = []
+	for ( i = 0; i < quote.length; i++ ) {
+		filled_in.push(false);
+	}
+
+	var colorify = function(typed_str) {
+	    if ( typed_matches(typed_str) ) {
+			for ( i = 0; i < typed_str.length; i++ ) {
+				if ( !filled_in[i] ) {
+			    	fill_let("A" + i.toString());
+			    	filled_in[i] = true;
+				}
+			}
 	    } else {
-		err = first_error(typed);
-		for ( i = err; i < typed.length; i++ ) {
-		    if ( !(get_let("W" + i.toString())) ) {
-			console.log("BAD", i, typed[i], coords(i), "W" + i.toString() );
-			wrong_let(typed[i], coords(i), "W" + i.toString() );
-		    }
-		}
+			err = first_error(typed_str);
+			for ( i = err; i < typed_str.length; i++ ) {
+		    	if ( !(get_let("W" + i.toString())) ) {
+					//console.log("BAD", i, typed_str[i], coords(i), "W" + i.toString() );
+					wrong_let(typed_str[i], coords(i), "W" + i.toString() );
+		    	}
+			}
 	    }
 	}
-	
+
+	var last_typed;	
 
 	var box_stats = function() {
 	    var typed = $("#typing-box").val();
@@ -437,19 +446,52 @@ var highscore_script = function() {
 		max = typed.length;
 	    }
 	    last_length = typed.length;
+	    last_typed = typed;
 	}
 
 	var clear_extra = function() {
+		//calls global erasure_count
 	    var typed = $("#typing-box").val();
 	    if ( typed.length > max ) {
-		max = typed.length;
+			max = typed.length;
 	    }
-	    for ( i = typed.length; i < max; i++ ) {
-		aa = get_let("A" + i.toString());
-		ww = get_let("W" + i.toString());
-		if ( aa ) { unfill_let("A" + i.toString()); }
-		if ( ww ) { kill_let(ww); }
+	    for ( i = typed.length - erasure_count; i < max; i++ ) {
+	    	filled_in[i] = false;
+			aa = get_let("A" + i.toString());
+			ww = get_let("W" + i.toString());
+			if ( aa ) { unfill_let("A" + i.toString()); }
+			if ( ww ) { kill_let(ww); }
 	    }
+	}
+
+	var match_function = function(box_str) {
+	    $("#wpm").html( "<span id='speed'>" + wpm().toFixed(1) +  "</span> wpm." );
+	    display_wpm();
+	    if ( box_str === quote ) {
+			complete();
+	    }
+	}
+
+	var periods = []
+	for ( i = 0; i < quote.length; i++ ) {
+		if ( quote[i] === "." ) {
+			periods.push(i);
+		}
+	}
+	var erasure_count = 0;
+
+	var sanitize = function(typed_str) {
+		//console.log("sanitizing ", typed_str);
+		erasure_count = 0;
+		for ( i = 0; i < periods.length; i++ ) {
+			//console.log("snip ", typed_str.substring(periods[i]+1, periods[i]+3));
+			if ( typed_str.substring(periods[i]+1, periods[i]+3) === "  " ) {
+				erasure_count += 1;
+				//console.log("double space at ", i);
+				typed_str = typed_str.substring(0,periods[i]+1) + typed_str.substring(periods[i]+2, typed_str.length);
+			}
+		}
+		return typed_str;
 	}
 
 	
@@ -463,21 +505,27 @@ var highscore_script = function() {
 	    }
 	    
 	    if ( box.val().length < last_length && !is_complete() ) {
-		clear_extra();
+			clear_extra();
+	    }
+	    if ( box.val().length - last_length > 10 ) {
+	    	box.val(last_typed);
 	    }
 	    if ( !is_complete() ) {
-		box_stats();
-		colorify();
-		if ( typed_matches() ) {
-		    console.log("match!");
-		    $("#wpm").html( "<span id='speed'>" + wpm().toFixed(1) +  "</span> wpm." );
-		    display_wpm();
-		    if ( box.val() === quote ) {
-			complete();
-		    }
-		} else {
-		    console.log("no match.");
-		}
+			box_stats();
+			if ( typed_matches() ) {
+				colorify(box.val());
+				match_function(box.val())
+			} else {
+				clean_str = sanitize(box.val());
+				//console.log("clean: ", clean_str);
+				if ( typed_matches(clean_str) ) {
+					colorify(clean_str);
+					match_function(clean_str);
+				} else {
+					colorify(clean_str);
+					//console.log("no match");
+				}
+			}
 	    }
 	}
 
@@ -557,7 +605,7 @@ var highscore_script = function() {
 	    var fill_color = "#EB0ED1"
 	    lett = get_let(name);
 	    lett.transition()
-		.duration(75)
+		.duration(0)
 		.attr("fill", fill_color);
 	    return lett;
 	}
@@ -718,20 +766,23 @@ var highscore_script = function() {
 	    flash_color = "#00FBFF";
 	    complete_color = "#67008A"
 	    for ( i = 0; i < quote.length; i++ ) {
-		bad = get_let("W" + i);
-		if ( bad ) {
-		    kill_let(bad);
-		}
-		lett = get_let("A" + i);
-		lett.transition()
-		    .delay(500)
-		    .duration(350)
-		    .attr("fill", flash_color);
-		lett.transition()
-		    .delay(850)
-		    .duration(2200)
-		    .attr("fill", complete_color);
-	    }
+			bad = get_let("W" + i);
+			if ( bad ) {
+			    kill_let(bad);
+			}
+			lett = get_let("A" + i);
+			if (lett) {
+				lett.transition()
+				    .delay(500)
+				    .duration(350)
+			    	.attr("fill", flash_color);
+				lett.transition()
+			    	.delay(850)
+			    	.duration(2200)
+			    	.attr("fill", complete_color);
+		    }
+	   	}
+
 	    attribution = get_let("attribution");
 	    attribution.transition()
 		.delay(500)
@@ -745,13 +796,11 @@ var highscore_script = function() {
 	    spd = get_let("wpm-display")
     	spd_place = Math.floor(w/2 - buf * 1.5);
     	console.log("WIDTH", w, spd_place);
-	    if ( spd ) {
 		spd.transition()
 		    .delay(1700)
 		    .duration(1000)
 		    .attr("x", spd_place)
 		    .attr("fill", "#FFAE00");
-	    }
 	    setTimeout(function() {$("#typing-box").hide("slow"); }, 500);
 	    setTimeout(function() {ready_submit(); }, 1750);
 	}
