@@ -23,12 +23,13 @@
     		</thead>
 			<tbody>
 				<% score_count = 0 %>
-				<% @user.highscores.each do |highscore| %>
+				<% @user.highscores.order(score: :desc).each do |highscore| %>
         			<tr>
        					<td class="stamp"><%= score_count + 1 %></td>
            				<td class="stamp"><%= highscore.score %> WPM</td>
            				<td class="stamp"><%= link_to highscore.quote_attr, quote_path(highscore.quote_id) %></td>
-	            		<td class="stamp"><%= (highscore.created_at).to_time.strftime('%A, %B %e, %l:%M %p')  %></td>
+           				<% Time.zone = 'EST' %>
+	            		<td class="stamp"><%= (highscore.created_at).in_time_zone.to_time.strftime('%A, %B %e, %l:%M %p')  %></td>
     	      		</tr>
     	      		<% score_count += 1 %>
     	      		<% break if score_count > 9 %>

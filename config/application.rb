@@ -22,5 +22,5 @@ module ShimmerClick
   end
 end
 
-config.time_zone = 'Eastern Time (US & Canada)'
-config.active_record.default_timezone = 'Eastern Time (US & Canada)'
+# config.time_zone = 'Eastern Time (US & Canada)'
+# config.active_record.default_timezone = 'Eastern Time (US & Canada)'
