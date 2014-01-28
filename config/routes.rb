@@ -1,8 +1,10 @@
 ShimmerClick::Application.routes.draw do
+  get "users/new"
   root 'landing_page#home'
   match '/game', to: 'highscores#new', via: 'get'
   match '/scores', to: 'highscores#index', via: 'get'
   match '/quotes', to: 'quotes#index', via: 'get'
+  match '/signup', to: 'users#new', via: 'get'
 
   resources :highscores
 
