@@ -302,6 +302,19 @@ var landing_script = function() {
 
 }
 
+
+////////////////////////////////////////////////////////////
+///		 ////		/////		  /////	    ///	  ///	////
+////  ///  ////  ///  /////  //////////  //   ///  //  /////
+////  ///  ////  ///  /////  /////////  ////  ///  /  //////
+////  /  //////  /   //////  	//////        ///     //////
+////  ///  ////  ///   ////  /////////  ////  ///  /  //////
+////  ///  ////  ////   ///  /////////  ////  ///  //   ////
+///		 ///	 ////    //		   //   ////   //  ///   ///
+////////////////////////////////////////////////////////////
+
+
+
 var highscore_script = function() {	
 
 	$("#running").html("true");
@@ -358,6 +371,15 @@ var highscore_script = function() {
 	var last_length = 0; // used by box_stats
 	var numrows; // used by recalculate_hight
 	var spacing = 17;
+	var logged_in = false;
+	if ( $("#user_name").html() != "" ) {
+		logged_in = $("#user_name").html();
+	}
+	console.log("Logged in:", logged_in)
+	if ( logged_in ) {
+		$("#highscore_name").val(logged_in);
+		$("#name").addClass("hidden");
+	}
 
 
 	// WPM recording stuff + typing check stuff

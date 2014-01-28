@@ -23,10 +23,18 @@
       <tbody>
         <% score_count = 0 %>
         <% @highscores.each do |highscore| %>
+          <% unless highscore.user_id == 0 %>
+            <% user = @users[highscore.user_id - 1] %>
+          <% end %>
           <tr>
             <td class="stamp"><%= score_count + 1 %></td>
-            <td class="stamp"><%= highscore.name %></td>
+            <% if user %>
+              <td class="stamp"><%= link_to user.name, user %></td>
+            <% else %>
+              <td class="stamp"><%= highscore.name %></td>
+            <% end %>
             <td class="stamp"><%= highscore.score %> WPM</td>
+            <td class="stamp"><%= highscore.user_id %></td>
           </tr>
           <% score_count += 1 %>
         <% end %>

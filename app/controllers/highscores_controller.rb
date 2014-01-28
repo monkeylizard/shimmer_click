@@ -1,10 +1,12 @@
 class HighscoresController < ApplicationController
+  before_action :signed_in_user, only: [:destroy]
   before_action :set_highscore, only: [:show, :edit, :update, :destroy]
 
   # GET /highscores
   # GET /highscores.json
   def index
     @highscores = Highscore.order(score: :desc)
+    @users = User.all
   end
 
   # GET /highscores/1
@@ -14,6 +16,7 @@ class HighscoresController < ApplicationController
 
   # GET /highscores/new
   def new
+    @logged_in = current_user.name if signed_in?
     @quote = Quote.all
     @highscore = Highscore.new
   end
@@ -28,7 +31,12 @@ class HighscoresController < ApplicationController
   # POST /highscores.json
   def create
     @quote = Quote.all
-    @highscore = Highscore.new(highscore_params)
+    if signed_in?
+      @highscore = current_user.highscores.build(highscore_params)
+    else
+      @highscore = Highscore.new(highscore_params)
+      @highscore.user_id = 0
+    end
 
     respond_to do |format|
       if @highscore.save

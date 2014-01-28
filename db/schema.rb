@@ -11,14 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140128010600) do
+ActiveRecord::Schema.define(version: 20140128050507) do
 
   create_table "highscores", force: true do |t|
     t.string   "name"
     t.float    "score"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_id"
   end
+
+  add_index "highscores", ["user_id"], name: "index_highscores_on_user_id"
 
   create_table "quotes", force: true do |t|
     t.text     "content",     limit: 255
@@ -32,8 +35,10 @@ ActiveRecord::Schema.define(version: 20140128010600) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "password_digest"
+    t.string   "remember_token"
   end
 
   add_index "users", ["name"], name: "index_users_on_name", unique: true
+  add_index "users", ["remember_token"], name: "index_users_on_remember_token"
 
 end

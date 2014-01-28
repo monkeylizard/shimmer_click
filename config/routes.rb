@@ -1,16 +1,18 @@
 ShimmerClick::Application.routes.draw do
-  get "users/new"
+
+  resources :highscores
+  resources :quotes
+  resources :users
+  resources :sessions, only: [:new, :create, :destroy]
+  
   root 'landing_page#home'
   match '/game', to: 'highscores#new', via: 'get'
   match '/scores', to: 'highscores#index', via: 'get'
   match '/quotes', to: 'quotes#index', via: 'get'
   match '/signup', to: 'users#new', via: 'get'
+  match '/signin', to: 'sessions#new', via: 'get'
+  match '/signout', to: 'sessions#destroy', via: 'delete'
 
-  resources :highscores
-
-  resources :quotes
-
-  resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
