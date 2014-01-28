@@ -21,3 +21,6 @@ module ShimmerClick
     # config.i18n.default_locale = :de
   end
 end
+
+config.time_zone = 'Eastern Time (US & Canada)'
+config.active_record.default_timezone = 'Eastern Time (US & Canada)'
