@@ -19,6 +19,7 @@
           <th>Name</th>
           <th>Score</th>
           <th>Quote</th>
+          <th>Date</th>
         </tr>
       </thead>
       <tbody>
@@ -35,9 +36,8 @@
               <td class="stamp"><%= highscore.name %></td>
             <% end %>
             <td class="stamp"><%= highscore.score %> WPM</td>
-            <% if highscore.quote_id %>
-              <td class="stamp"><%= link_to highscore.quote_attr, quote_path(highscore.quote_id) %></td>
-            <% end %>
+            <td class="stamp"><%= link_to highscore.quote_attr, quote_path(highscore.quote_id) %></td>
+            <td class="stamp"><%= (highscore.created_at).to_time.strftime('%A, %B %e, %l:%M %p')  %></td>
           </tr>
           <% score_count += 1 %>
         <% end %>

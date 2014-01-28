@@ -1,1 +1,41 @@
-<h1><%= @user.name %></h1>
+<style type="text/css">
+  body {
+    background-color: #FFC2DB;
+  }
+</style>
+
+<br>
+<div class="row">
+	<div class="col-md-9 col-md-offset-1">
+		<h1 class="stamp"><%= @user.name %> <small>best scores</small></h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-9 col-md-offset-1">
+		<table class="table table-striped">
+    		<thead class="stamp">
+   				<tr>
+   					<th>#</th>
+        			<th>Score</th>
+        			<th>Quote</th>
+        			<th>Date</th>
+	    		</tr>
+    		</thead>
+			<tbody>
+				<% score_count = 0 %>
+				<% @user.highscores.each do |highscore| %>
+        			<tr>
+       					<td class="stamp"><%= score_count + 1 %></td>
+           				<td class="stamp"><%= highscore.score %> WPM</td>
+           				<td class="stamp"><%= link_to highscore.quote_attr, quote_path(highscore.quote_id) %></td>
+	            		<td class="stamp"><%= (highscore.created_at).to_time.strftime('%A, %B %e, %l:%M %p')  %></td>
+    	      		</tr>
+    	      		<% score_count += 1 %>
+    	      		<% break if score_count > 9 %>
+        		<% end %>
+      		</tbody>
+	   	</table>
+	</div>
+</div>
+
+<%= render 'layouts/play' %>

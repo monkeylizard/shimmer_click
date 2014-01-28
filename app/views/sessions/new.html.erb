@@ -16,10 +16,10 @@
 				<%= f.password_field :password, { :class => "form-control"} %>
 			</div>
 			<div class="actions form-group"><br>
-				<%= f.submit "Submit", { :class => "btn btn-and"} %>
+				<%= f.submit "Submit", { :class => "btn btn-and stamp"} %>
 			</div>
 		<% end %>
 
-		<p>New here? <%= link_to "Sign up now!", signup_path %></p>
+		<p class="stamp">New here? <%= link_to "Sign up now!", signup_path %></p>
 	</div>
 </div>

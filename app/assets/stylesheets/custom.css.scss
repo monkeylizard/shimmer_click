@@ -40,7 +40,6 @@ body {
 
 .stamp {
 	font-family: "Courier New";
-	font-weight: "bolder";
 }
 
 
@@ -61,15 +60,17 @@ body {
 }
 
 
-a:hover {
-	.shimmer {
-		color: #FFC2DB;
-	}
-	.click {
-		color: #C2FFE6;
-	}
-	.and {
-		display: none;
+a {
+  &:hover {
+    .shimmer {
+	 	  color: #FFC2DB;
+	  }
+		.click {
+			color: #C2FFE6;
+		}
+		.and {
+			display: none;
+		}
 	}
 }
 

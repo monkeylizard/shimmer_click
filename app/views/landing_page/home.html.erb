@@ -22,9 +22,16 @@
 				<th>Score</th>
 				<% score_count = 0 %>
 				<% @highscores.each do |highscore| %>
+		        	<% unless highscore.user_id == 0 %>
+            			<% user = @users[highscore.user_id - 1] %>
+          			<% end %>
 					<tr>
 						<td class="stamp"><%= score_count + 1 %></td>
-						<td class="stamp"><%= highscore.name %></td>
+			            <% if user %>
+              				<td class="stamp"><%= link_to user.name, user %></td>
+            			<% else %>
+              				<td class="stamp"><%= highscore.name %></td>
+            			<% end %>
 						<td class="stamp"><%= highscore.score %> WPM</td>
 					</tr>
 					<% score_count += 1 %>
@@ -36,16 +43,12 @@
 			</div>
 		</div>
 	</div>
-	<br>
-	<div class="row">
-		<div class="col-md-2 col-md-offset-4">
-			<%= link_to "New Game", game_path, { :class => "btn btn-and btn-lg center-block" } %>
-		</div>
-		<div class="col-md-6"></div>
-	</div>
 	<div class="hidden">
 		<div id="page_name">Home</div>
 		<div id="running"></div>
 		<div id="timer"></div>
 		<%= render 'highscores/quotelist' %>
 	</div>
+
+
+<%= render 'layouts/play' %>
