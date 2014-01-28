@@ -1,0 +1,26 @@
+
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <%= link_to root_path, { :class => "navbar-brand" } do %>
+      <%= render 'layouts/logo' %>
+    <% end %>
+  </div>
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav navbar-right">
+      <li><p class="navbar-text">Typing for fun and glory!</p></li>
+      <li><%= link_to "Home", root_path %></li>
+      <li><%= link_to "New Game", game_path %></li>
+      <li><%= link_to "Highscores", scores_path %></li>
+      <li><%= link_to "Quotes", quotes_path %></li>
+    </ul>
+  </div><!-- /.navbar-collapse -->
+</nav>
