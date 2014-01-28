@@ -7,6 +7,7 @@ class HighscoresController < ApplicationController
   def index
     @highscores = Highscore.order(score: :desc)
     @users = User.all
+    @quotes = Quote.all
   end
 
   # GET /highscores/1
@@ -17,7 +18,7 @@ class HighscoresController < ApplicationController
   # GET /highscores/new
   def new
     @logged_in = current_user.name if signed_in?
-    @quote = Quote.all
+    @quotes = Quote.all
     @highscore = Highscore.new
   end
 
@@ -40,7 +41,7 @@ class HighscoresController < ApplicationController
 
     respond_to do |format|
       if @highscore.save
-        format.html { redirect_to @highscore, notice: 'Your score has been saved!' }
+        format.html { redirect_to @highscore, flash: { info: 'Your score has been saved!' } }
         format.json { render action: 'show', status: :created, location: @highscore }
       else
         format.html { render action: 'new' }
@@ -55,7 +56,7 @@ class HighscoresController < ApplicationController
   def update
     respond_to do |format|
       if @highscore.update(highscore_params)
-        format.html { redirect_to @highscore, notice: 'Highscore was successfully updated.' }
+        format.html { redirect_to @highscore, flash: { info: 'Highscore was successfully updated.' } }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -83,6 +84,6 @@ class HighscoresController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def highscore_params
-      params.require(:highscore).permit(:name, :score)
+      params.require(:highscore).permit(:name, :score, :quote_attr, :quote_id)
     end
 end

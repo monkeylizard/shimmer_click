@@ -18,6 +18,7 @@
           <th>Rank</th>
           <th>Name</th>
           <th>Score</th>
+          <th>Quote</th>
         </tr>
       </thead>
       <tbody>
@@ -34,7 +35,9 @@
               <td class="stamp"><%= highscore.name %></td>
             <% end %>
             <td class="stamp"><%= highscore.score %> WPM</td>
-            <td class="stamp"><%= highscore.user_id %></td>
+            <% if highscore.quote_id %>
+              <td class="stamp"><%= link_to highscore.quote_attr, quote_path(highscore.quote_id) %></td>
+            <% end %>
           </tr>
           <% score_count += 1 %>
         <% end %>

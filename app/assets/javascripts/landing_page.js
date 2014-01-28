@@ -332,6 +332,8 @@ var highscore_script = function() {
 	var quotenum = rand_int(0,numquotes-1);
 	var quote = $("#quote" + quotenum).html();
 	var attr = $("#attr" + quotenum).html();
+	$("#highscore_quote_attr").val(attr);
+	$("#highscore_quote_id").val(quotenum+1);
 	console.log(quote, attr);
 	
 	$("#typing-box").bind('keyup', function() {

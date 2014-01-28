@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140128050507) do
+ActiveRecord::Schema.define(version: 20140128065556) do
 
   create_table "highscores", force: true do |t|
     t.string   "name"
@@ -19,6 +19,8 @@ ActiveRecord::Schema.define(version: 20140128050507) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
+    t.string   "quote_attr"
+    t.integer  "quote_id"
   end
 
   add_index "highscores", ["user_id"], name: "index_highscores_on_user_id"
