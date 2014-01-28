@@ -24,7 +24,7 @@
 					<tr>
 						<td><%= user.id %></td>
 						<td><%= link_to user.name, user%></td>
-						<td><%= user.highscores.order(score: :desc).first.score %> WPM ~ <%= link_to user.highscores.order(score: :desc).first.quote_attr, quote_path(user.highscores.order(score: :desc).first.quote_id) %> </td>
+						<td><%= user.highscores.order(score: :desc).first[:score] %> WPM ~ <%= link_to user.highscores.order(score: :desc).first.quote_attr, quote_path(user.highscores.order(score: :desc).first.quote_id) %> </td>
 					</tr>
 				<% end %>
 			</tbody>
