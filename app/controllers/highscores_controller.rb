@@ -6,7 +6,7 @@ class HighscoresController < ApplicationController
   # GET /highscores.json
   def index
     @highscores = Highscore.order(score: :desc)
-    @users = User.all
+    @users = User.order(:id)
     @quotes = Quote.all
   end
 
