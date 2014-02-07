@@ -33,3 +33,4 @@ end
 
 gem 'd3-rails'
 gem 'bcrypt-ruby', '3.1.2'
+gem 'websocket-rails'

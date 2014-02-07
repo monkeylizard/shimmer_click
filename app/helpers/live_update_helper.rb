@@ -1,0 +1,2 @@
+module LiveUpdateHelper
+end

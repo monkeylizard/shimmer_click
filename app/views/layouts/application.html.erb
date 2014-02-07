@@ -24,7 +24,30 @@
   <%= debug(params) if Rails.env.development? %>
 </div>
 
+<% if signed_in? %>
+  <div id="users-online">
+    <div id="users-header">
+      <h4>USERS ONLINE</h4>
+    </div>
+    <div id="user-list">
+    </div>
+    <div id="users-hidden" class="text-center">
+      <p>...</p>
+    </div>
+  </div>
+  <div class="challenge" id="challenge-0"></div>
+  <div class="challenge" id="challenge-1"></div>
+  <div class="challenge" id="challenge-2"></div>
+<% end %>
+
 </body>
 
+<% if signed_in? %>
+  <%= javascript_tag do %>
+    user_name = '<%= current_user.name %>';
+  <% end %>
+<% end %>
+
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+
 </html>

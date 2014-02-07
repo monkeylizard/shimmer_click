@@ -325,11 +325,28 @@ var highscore_script = function() {
 	    base = Math.random();
 	    return Math.floor( base * (high + 1 - low) ) + low;
 	}
+
+	// get url parameters
+
+	function get_URL_parameter(sParam) {
+		var sPageURL = window.location.search.substring(1);
+		var sURLVariables = sPageURL.split('&');
+		for (i = 0; i < sURLVariables.length; i++ ) {
+			var sParameterName = sURLVariables[i].split('=');
+			if ( sParameterName[0] == sParam) {
+				return sParameterName[1];
+			}
+		}
+	}
 	
 	// get the quote and attribution
 
 	var numquotes = parseInt($("#numquotes").html());
-	var quotenum = rand_int(0,numquotes-1);
+	var quotenum = get_URL_parameter("quote") - 1;
+	if (!(quotenum+1)) {
+		quotenum = rand_int(0,numquotes-1);		
+	}
+
 	var quote = $("#quote" + quotenum).html();
 	var attr = $("#attr" + quotenum).html();
 	$("#highscore_quote_attr").val(attr);
@@ -863,9 +880,232 @@ var start = function() {
 	}
 }
 
+//// WEBSOCKETY STUFF FOR LIVE UPDATING ////
+
+var dispatcher = new WebSocketRails('localhost:3000/websocket');
+var self_channel = dispatcher.subscribe(user_name);
+var user_list = [];
+
+dispatcher.on_open = function(data) {
+	console.log('Connection open!');
+}
+
+dispatcher.bind('update', function(data) {
+	console.log(data.message);
+});
+
+// receive updates on personal channel
+self_channel.bind('update', function(data) {
+	console.log(data.sent_by + ": " + data.update);
+});
+
+var update_to = function(channel, message) {
+	update = {'sent_by': user_name, 'update': message}
+	channel.trigger('update', update);
+}
+
+
+var post = function(message) {
+	console.log("posting " + message);
+	post_send = {'post': message};
+	dispatcher.trigger('post_to_log', post_send);
+}
+
+// DISPLAYING USERS //
+
+dispatcher.bind('update_users', function(data) {
+	user_list = data.user_list;
+	console.log(user_list);
+	if (user_list[0]) {
+		display_users();
+	}
+});
+
+var display_users = function() {
+	console.log("Users: " + user_list)
+	display_str = "";
+	for (i = 0; i < user_list.length - 1; i++ ) {
+		display_str += '<div class="user">' + user_list[i] + '</div><hr>';
+	}
+	display_str += '<div class="user">' + user_list[user_list.length-1] + '</div>';
+	$("#user-list").html(display_str);
+	$(".user").on('click', function(){
+		console.log("click!");
+		name = $(this).html();
+		console.log(name);
+		challenge_start(name);
+	});
+}
+
+$("#users-header").on('click', function() {
+	$("#user-list").toggle();
+	$("#users-hidden").toggle();
+	if( $("#users-hidden").is(":visible") ) {
+		$("#users-online").css("opacity", 0.4);
+	} else {
+		$("#users-online").css("opacity", 1);
+	}
+})
+
+//// CHALLENGE ANOTHER USER ////
+
+
+var opponent = false;
+
+var challenge_user = function(response) {
+	quotenum = response.quotenum
+	console.log("Challenging " + opponent + " on quote " + quotenum);
+	var opponent_channel = dispatcher.subscribe(opponent);
+	var challenge = { 'challenger': user_name, 'quotenum': quotenum }
+	opponent_channel.trigger('challenge', challenge);
+	show_issued_challenge(opponent, quotenum);
+}
+
+var quotenum_failure = function(response) {
+	console.log("Something went wrong; no quotenum could be found.");
+}
+
+var challenge_start = function(user) {
+	opponent = user;
+	quotenum_request = {'request': true}
+	dispatcher.trigger('request_quotenum', quotenum_request, challenge_user, quotenum_failure);
+}
+
+	// challenge response //
+
+var challenge_accepted = function(respondant, challenge_num) {
+	console.log("challenge accepted!", challenge_num);
+	div = $("#challenge-" + challenge_num);
+	div.html(respondant + " accepts!<br><div id='go-" + challenge_num + "' class='go-challenge text-center'>go!</div>");
+	$("#go-" + challenge_num).on('click', function() {
+		window.location.href = "/game?challengee=" + respondant + "&quote=" + challenges[challenge_num][1];
+	});
+}
+
+var challenge_declined = function(respondant, challenge_num) {
+	console.log("challenge declined", challenge_num);
+	div = $("#challenge-" + challenge_num);
+	div.html(respondant + " declines.<br><div id='close-" + challenge_num + "' class='close-challenge text-center'>close</div>");
+	$("#close-" + challenge_num).on('click', function() {
+		$("#challenge-" + challenge_num).hide();
+		$("#challenge-" + challenge_num).html("");
+		challenges[challenge_num] = -1;
+	});
+}
+
+self_channel.bind('challenge_response', function(data) {
+	if ( data.accept ) {
+		respondant_name = data.self;
+		console.log(respondant_name + " accepted your challenge!");
+		for ( i = 0; i < challenges.length; i++ ) {
+			if ( challenges[i][0] === respondant_name ) {
+				challenge_accepted(respondant_name, i);
+			}
+		}
+
+	} else {
+		respondant_name = data.self;
+		console.log(respondant_name + " declined your challenge.");
+		for ( i = 0; i < challenges.length; i++ ) {
+			if ( challenges[i][0] === respondant_name ) {
+				challenge_declined(respondant_name, i);
+			}
+		}
+	}
+})
+
+
+	// receive a challenge //
+
+challenges = [-1, -1, -1];
+
+var show_challenge = function(challenger, quotenum) {
+	for ( i = 0; i < challenges.length; i++ ) {
+		if ( challenges[i] === -1 ) { 
+			console.log("Showing challenge received on block " + i);
+			var challenge_num = i;
+			challenges[i] = [challenger, quotenum];
+			break;
+		}
+	}
+	if ( !( challenge_num + 1 ) ) { return }
+	challenge_div = $("#challenge-" + challenge_num);
+	challenge_div.html("Challenge from " + challenger + "<br><div id='accept-" + challenge_num + "' class='accept'>accept</div><div id='decline-" + challenge_num + "' class='decline'>decline</div>");
+	challenge_div.show();
+	$("#decline-" + challenge_num).on('click', function() {
+		decline_challenge(challenger, challenge_num)
+	});
+	$("#accept-" + challenge_num).on('click', function() {
+		accept_challenge(challenger, challenge_num)
+	});
+}
+
+var show_issued_challenge = function(challengee, quotenum) {
+	for ( i = 0; i < challenges.length; i++ ) {
+		if ( challenges[i] === -1 ) { 
+			console.log("Showing challenge issued on block " + i);
+			var challenge_num = i;
+			challenges[i] = [challengee, quotenum];
+			break;
+		}
+	}
+	if ( !( challenge_num + 1 ) ) { return }
+	challenge_div = $("#challenge-" + challenge_num);
+	challenge_div.html("You challenged " + challengee + "<br>waiting for response...");
+	challenge_div.show();
+}
+
+var decline_challenge = function(challenger, challenge_num) {
+	challenger_channel = dispatcher.subscribe(challenger);
+	decline = { 'self': user_name, 'accept': false }
+	challenger_channel.trigger('challenge_response', decline);
+	div = $("#challenge-" + challenge_num);
+	div.hide();
+	div.html("");
+	challenges[challenge_num] = -1;
+}
+
+var accept_challenge = function(challenger, challenge_num) {
+	challenger_channel = dispatcher.subscribe(challenger);
+	accept = { 'self': user_name, 'accept': true }
+	challenger_channel.trigger('challenge_response', accept);
+	window.location.href="/game?challenger=" + challenger + "&quote=" + challenges[challenge_num][1];
+}
+
+self_channel.bind('challenge', function(data) {
+	console.log("Challenge from " + data.challenger + " on quote number " + data.quotenum);
+	show_challenge(data.challenger, data.quotenum);
+})
+
+//////
+
+user_request = {'request': true}
+dispatcher.trigger('request_user_list', user_request);
+
+//// PRESS PLAY ////
+
 $(document).ready(function() {
 	start();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

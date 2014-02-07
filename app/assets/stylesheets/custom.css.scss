@@ -117,3 +117,115 @@ a {
 }
 
 
+/* Users online */
+
+#users-online {
+  position: fixed;
+  left: 20px;
+  bottom: 0;
+  padding: 15px;
+  padding-bottom: 0;
+  max-height: 40%;
+  max-width: 200px;
+  overflow: scroll;
+  background-color: #FFAE00;
+  color: white;
+  h4 {
+    font-family: "Courier New";
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+#user-list {
+  background-color: white;
+  color: #1F054D;
+  padding: 5px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  font-family: "Courier New";
+  hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .user {
+    padding: 5px;
+    &:hover{
+      background-color: #FFAE00;
+    }
+  }
+}
+
+#users-hidden {
+  margin: 0;
+  display: none;
+  p {
+    margin-top: -5px;
+    padding: 0;
+  }
+}
+
+/* challenges */
+
+.challenge {
+  position: fixed;
+  left: 220px;
+  bottom: 0;
+  padding: 15px;
+  padding-bottom: 5px;
+  max-height: 100px;
+  max-width: 250px;
+  overflow: scroll;
+  background-color: #FFAE00;
+  color: white;
+  font-family: "Courier New";
+  display: none;
+  .accept {
+    &:hover {
+      background-color: #E39B00;
+    }
+    float: left;
+    margin: 0;
+    margin-left: 20px;
+    padding: 5px;
+  }
+  .decline {
+    &:hover {
+      background-color: #E39B00;
+    }
+    float: right;
+    margin: 0;
+    margin-right: 20px;
+    padding: 5px;
+  }
+  .close-challenge {
+    &:hover {
+      background-color: #E39B00;
+    }
+    margin: 0;
+    padding: 5px;
+  }  
+  .go-challenge {
+    &:hover {
+      background-color: #E39B00;
+    }
+    margin: 0;
+    padding: 5px;
+  }    
+}
+
+#challenge-1 {
+  left: 490px;
+}
+
+#challenge-2 {
+  left: 760px;
+}
+
+
+
+
+
+
+
+

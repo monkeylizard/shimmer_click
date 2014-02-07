@@ -15,4 +15,6 @@
 //= require turbolinks
 //= require d3
 //= require bootstrap
+//= require websocket_rails/main
 //= require_tree .
+
