@@ -400,6 +400,7 @@ var highscore_script = function() {
 	// other globals
 
 	var coords; // assigned to coord_maker(quote) after coord_maker is defined.
+	var cursor; // assigned to make_cursor(0) after make_cursor is defined.
 	var max = 0; // used by box_stats
 	var last_length = 0; // used by box_stats
 	var numrows; // used by recalculate_hight
@@ -484,6 +485,7 @@ var highscore_script = function() {
 			}
 	    } else {
 			err = first_error(typed_str);
+			console.log("BADNESS", typed_str);
 			for ( i = err; i < typed_str.length; i++ ) {
 		    	if ( !(get_let("W" + i.toString())) ) {
 					//console.log("BAD", i, typed_str[i], coords(i), "W" + i.toString() );
@@ -522,6 +524,7 @@ var highscore_script = function() {
 	var match_function = function(box_str) {
 	    $("#wpm").html( "<span id='speed'>" + wpm().toFixed(1) +  "</span> wpm." );
 	    display_wpm();
+	    console.log("Is complete?", box_str, quote);
 	    if ( box_str === quote ) {
 			complete();
 	    }
@@ -551,35 +554,48 @@ var highscore_script = function() {
 
 	
 	// function bound to keyup event
-
+	dbl_space = false;
 	var typing_check = function() {
 	    var timer = $("#timer");
 	    var box = $("#typing-box");
+	    var box_str = box.val();
+	    if ( dbl_space ) {
+	    	box_str = sanitize(box_str);
+	    }
+		cursor = cursor_update(cursor, box_str.length);
 	    if ( timer.html() == "" ) {
 		timer.html(time());
 	    }
 	    
-	    if ( box.val().length < last_length && !is_complete() ) {
+	    if ( box_str.length < last_length && !is_complete() ) {
 			clear_extra();
 	    }
-	    if ( box.val().length - last_length > 10 ) {
+	    if ( box_str.length - last_length > 10 ) {
 	    	box.val(last_typed);
 	    }
 	    if ( !is_complete() ) {
 			box_stats();
 			if ( typed_matches() ) {
-				colorify(box.val());
-				match_function(box.val())
+				console.log("match");
+				colorify(box_str);
+				match_function(box_str);
+				//cursor = cursor_update(cursor, box.val().length);
 			} else {
-				clean_str = sanitize(box.val());
-				//console.log("clean: ", clean_str);
-				if ( typed_matches(clean_str) ) {
-					colorify(clean_str);
-					match_function(clean_str);
-				} else {
-					colorify(clean_str);
-					//console.log("no match");
+				if ( !dbl_space ) {
+					box_str = sanitize(box_str);
+					if ( typed_matches(box_str) ) {
+						console.log("match with double space");
+						colorify(box_str);
+						match_function(box_str);
+						dbl_space = true;
+						return;
+					}
 				}
+
+				console.log("BAD!");
+				colorify(box_str);
+				match_function(box_str);
+				//console.log("no match");
 			}
 	    }
 	}
@@ -620,6 +636,7 @@ var highscore_script = function() {
 	}
 	
 	var wrong_let = function(letter, coord, name) {
+		console.log("WRONG: ", letter);
 	    if ( letter == " " ) {
 		letter = "_";
 	    }
@@ -669,7 +686,7 @@ var highscore_script = function() {
 	    var deleted_color = "#8DA69F"
 	    lett = get_let(name);
 	    lett.transition()
-		.duration(20)
+		.duration(0)
 		.attr("fill", deleted_color);
 	    return lett;
 	}
@@ -831,6 +848,32 @@ var highscore_script = function() {
 	    place_supplement(typing_speed, "wpm");
 	    }
 	}
+
+	var make_cursor = function( position ) {
+		// text, id, x, y, font, weight, size, color
+		cursor_id = "cursor";
+		cursor_coord = coords(position);
+		font = "Courier New";
+		weight = "bold";
+	    cursor_label = ".C" + rand_int(0, 8000);
+	    if ( isMobile ) {
+		var cursor_size = "1em";
+	    } else {
+		var cursor_size = "1.5em";
+	    }
+		color = "#FFAE00";
+		cursor_new = display_text( "_", cursor_id, cursor_coord[0], cursor_coord[1], font, weight, cursor_size, color );
+		return cursor_new;
+	}
+
+	var cursor_update = function ( cursor, position ) {
+		coord = coords(position);
+		cursor.transition()
+			.duration(0)
+			.attr("x", coord[0])
+			.attr("y", coord[1]);
+		return cursor;
+	}
 	    
 
 	// Signal that the game is complete
@@ -838,6 +881,8 @@ var highscore_script = function() {
 	var display_complete = function() {
 	    flash_color = "#00FBFF";
 	    complete_color = "#67008A"
+
+	    // remove stray red letters and recolor main text
 	    for ( i = 0; i < quote.length; i++ ) {
 			bad = get_let("W" + i);
 			if ( bad ) {
@@ -856,6 +901,7 @@ var highscore_script = function() {
 		    }
 	   	}
 
+	   	// move and recolor attribution
 	    attribution = get_let("attribution");
 	    attribution.transition()
 		.delay(500)
@@ -866,6 +912,8 @@ var highscore_script = function() {
 		.delay(850)
 		.duration(2200)
 		.attr("fill", complete_color);
+
+		// move and recolor wpm display
 	    spd = get_let("wpm-display")
     	spd_place = Math.floor(w/2 - buf * 1.5);
     	console.log("WIDTH", w, spd_place);
@@ -874,7 +922,11 @@ var highscore_script = function() {
 		    .duration(1000)
 		    .attr("x", spd_place)
 		    .attr("fill", "#FFAE00");
-	    setTimeout(function() {$("#typing-box").hide("slow"); }, 500);
+
+	    setTimeout(function() {
+	    	$("#typing-box").hide("slow"); 
+	    	cursor.remove();
+	    }, 500);
 	    setTimeout(function() {ready_submit(); }, 1750);
 	}
 
@@ -942,7 +994,6 @@ var highscore_script = function() {
 	}
 
 	var display_opponent_wpm = function( opponent_wpm ) {
-		// text, id, x, y, font, weight, size, color
 		x = w - buf * 4;
 		id = "opponent-wpm-display";
 		size = "2.5em";
@@ -1078,21 +1129,34 @@ var highscore_script = function() {
 		});
 
 	} else {
+		console.log('single player start');
 		start = { 'start': true }
 		self_channel.trigger('start', start);
+		start_cycle = setInterval(function() {
+			self_channel.trigger('start', start);
+		}, 500);
+		self_channel.bind('started', function(data) {
+			clearInterval(start_cycle);
+		})
 	}
 	    
 
 
 	// Doing stuff
+	var started = false;
 	self_channel.bind('start', function(data) {
-		coords = coord_maker(quote); //declared above	
-		draw_sentence(quote);
-		display_wpm_names();
-		place_supplement(attr, "attribution");
-		if ( $("#reload").html() == "true" ) {
-			$(".showable").show();
-			$("#typing-box").hide();
+		if ( !started ) {
+			started = {'started': true};
+			self_channel.trigger('started', started);
+			coords = coord_maker(quote); //declared above
+			cursor = make_cursor(0); //declared above
+			draw_sentence(quote);
+			if ( multiplayer ) { display_wpm_names(); }
+			place_supplement(attr, "attribution");
+			if ( $("#reload").html() == "true" ) {
+				$(".showable").show();
+				$("#typing-box").hide();
+			}
 		}
 	});
 }
@@ -1150,20 +1214,24 @@ dispatcher.bind('update_users', function(data) {
 });
 
 var display_users = function() {
-	console.log("Users: " + user_list)
 	display_str = "";
 	self_pos = 0;
 	for ( i = 0; i < user_list.length; i++ ) {
+		console.log("clearing user list", i);
 		if ( user_list[i] === user_name ) {
-			user_list = user_list.splice(i-1, 1);
+			user_list.splice(i, 1);
 			break;
+		} else {
+			console.log(user_list[i], user_name);
 		}
 	}
 	for (i = 0; i < user_list.length - 1; i++ ) {
 		console.log("Online user: ", user_list[i]);
 		display_str += '<div class="user">' + user_list[i] + '</div><hr>';
 	}
-	display_str += '<div class="user">' + user_list[user_list.length-1] + '</div>';
+	if ( user_list[0] ) {
+		display_str += '<div class="user">' + user_list[user_list.length-1] + '</div>';
+	}
 	if ( display_str === "" ) {
 		display_str += '<div>Nobody :(</div>';
 	}
@@ -1322,8 +1390,6 @@ self_channel.bind('challenge', function(data) {
 
 //////
 
-user_request = {'request': true}
-dispatcher.trigger('request_user_list', user_request);
 
 //// PRESS PLAY ////
 
