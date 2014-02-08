@@ -357,6 +357,20 @@ var highscore_script = function() {
 	    typing_check();
 	});
 
+	// determine whether this is a multiplayer game and make sure clients agree
+
+	var multiplayer = false;
+	var opponent = get_URL_parameter("challengee");
+	challenger = true;
+	if (!opponent) {
+		opponent = get_URL_parameter("challenger");
+		challenger = false;
+	}
+	if (opponent) {
+		multiplayer = true;
+		opponent_channel = dispatcher.subscribe(opponent);
+	}
+
 	// set up the svg
 
 	var buf = 50;
@@ -687,7 +701,7 @@ var highscore_script = function() {
 	var recalculate_height = function(num_rows, spacing) {
 	    numrows = num_rows;
 	    h = window.innerHeight / 3
-	    ht = buf * 2 + (num_rows + 2) * spacing * 1.3;
+	    ht = buf * 2 + (num_rows + 4) * spacing * 1.3;
 	    new_ht = Math.max(h, ht);
 	    if (ht != h) {
 		$("#quote-display").animate({height: new_ht.toString()}, 200);
@@ -757,6 +771,31 @@ var highscore_script = function() {
 
 	// Placing the attribution & wpm
 
+	var display_text = function(text, id, x, y, font, weight, size, color, align_right) {
+		if (typeof align_right === 'undefined') { align_right = false; }
+		if ( align_right ) {
+			anchor = "end";
+		} else {
+			anchor = "start";
+		}
+	    label = ".C" + rand_int(0, 8000);
+		txt = svg.selectAll(label)
+			.data([text])
+			.enter()
+			.append("text")
+			.attr("id", id)
+			.attr("x", x)
+			.attr("y", y)
+			.text(text)
+			.attr("font-family", font)
+			.attr("font-weight", weight)
+			.attr("font-size", size)
+			.attr("fill", color)
+			.attr("text-anchor", anchor);
+
+		return txt
+	}
+
 	var place_supplement = function(text, kind) {
 	    // uses globals attr, buf, numrows, spacing
 	    var attr_color = "#4B947F";
@@ -771,19 +810,8 @@ var highscore_script = function() {
 		attr_color = "#E38DA1";
 	    }
 	    y = buf + (numrows + 2) * spacing * 1.3;
-	    
-	    lett = svg.selectAll(label)
-		.data([text])
-		.enter()
-		.append("text")
-		.attr("id", id)
-		.attr("x", x)
-		.attr("y", y)
-		.text(text)
-		.attr("font-family", "Calibri")
-		.attr("font-weight", "bold")
-		.attr("font-size", size)
-		.attr("fill", attr_color);
+
+	    lett = display_text(text, id, x, y, "Calibri", "bold", size, attr_color);
 	    
 	    return lett;
 
@@ -791,6 +819,10 @@ var highscore_script = function() {
 
 	var display_wpm = function() {
 	    typing_speed = $("#speed").html() + " WPM";
+		if ( multiplayer ) {
+			game_update = {'wpm': typing_speed }
+			opponent_channel.trigger('game_update', game_update);
+		}
 	    prev_wpm = get_let("wpm-display")
 	    if ( prev_wpm ) {
 		prev_wpm.transition()
@@ -854,22 +886,218 @@ var highscore_script = function() {
 	    $(".showable").show("slow");
 	}
 
-	    
+	// functions for multiplayer handshake //
+
+
+	var display_waiting = function() {
+		str = "Waiting for opponent...";
+		id = "waiting_text"
+		x = buf * 2;
+		y = h / 3;
+		font = "Courier New";
+		weight = "normal";
+		size = "2em";
+		color = "#67008A";
+		wait = display_text(str, id, x, y, font, weight, size, color);
+		return wait;
+	}
+
+	var countdown_number = function( number ) {
+		console.log(number);
+		id = "countdown" + number;
+		x = buf * 4;
+		y = ( h / 3 ) + buf;
+		font = "Courier New";
+		weight = "normal";
+		size = "2em";
+		color = "#67008A";
+		num = display_text(number, id, x, y, font, weight, size, color);
+		setTimeout(function() { kill_let(num); }, 900);
+	}
+
+	var start_countdown = function( start_time ) {
+		countdown_text = display_text("Starting in...", "countdown_text", buf * 2, h / 3, "Courier New", "normal", "2em", "#67008A");
+		time_now = new Date().getTime();
+		console.log("now: " + time_now);
+		console.log("start: " + start_time);
+		time_3 = start_time - 3000;
+		time_2 = start_time - 2000;
+		time_1 = start_time - 1000;
+		times = [time_3, time_2, time_1];
+		k = 0;
+		for ( i = 0; i < times.length; i++ ) {
+			if ( times[i] - time_now > 0 ) {
+				setTimeout(function() { countdown_number(k); k -= 1; }, times[i] - time_now)
+				console.log(i + ": ", times[i] - time_now)
+				k += 1;
+			}
+		}
+		setTimeout( function() {  kill_let(countdown_text); game_start(); }, start_time - time_now );
+		console.log("start at: ", start_time - time_now)
+	}
+
+	var game_start = function() {
+		start = { 'start': true }
+		self_channel.trigger('start', start);
+	}
+
+	var display_opponent_wpm = function( opponent_wpm ) {
+		// text, id, x, y, font, weight, size, color
+		x = w - buf * 4;
+		id = "opponent-wpm-display";
+		size = "2.5em";
+		color = "#E38DA1";
+	    y = buf + (numrows + 3) * spacing * 1.5;
+	    console.log("wpm y:", y);
+	    opponent_wpm_display = display_text(opponent_wpm, id, x, y, "Calibri", "bold", size, color);
+	    return opponent_wpm_display
+	}
+
+	var update_opponent_wpm = function( opponent_wpm ) {
+		opponent_wpm_display.transition()
+			.text(opponent_wpm);
+	}
+
+	var display_wpm_names = function() {
+		x = w - buf * 4 - 15;
+		id1 = "self_wpm_name";
+		id2 = "opponent_wpm_name";
+		size = "2.5em";
+		color = "#E38DA1";
+		y1 = buf + (numrows + 2) * spacing * 1.3;
+		y2 = buf + (numrows + 3) * spacing * 1.5;
+		console.log("wpm name y's", y1, y2);
+		self_wpm_name = display_text(user_name, id1, x, y1, "Calibri", "bold", size, color, true);
+		opponent_wpm_name = display_text(opponent, id2, x, y2, "Calibri", "bold", size, color, true);
+	}
+
+	if ( multiplayer ) {
+		waiting_text = display_waiting();
+		// handshake stuff
+
+		var stage = 0;
+		// at stage 0, send presence check, and
+		// listen for presence check and game stats.
+		// If you receive a presence check, send game stats
+		// then go to stage 1 and listen for
+		// confirmation. 
+		// 		If you receive game stats:
+		// if they match, send confirmation success, 
+		// start the game, and go to stage 2, where you stop
+		// listening for handshake info. If they don't,
+		// send confirmation failure and redirect yourself
+		// to the correct game page.
+		//
+		// At stage 1, if you receive confirmation success,
+		// go to stage 2 andstart the game. If you receive
+		// confirmation failure, return to stage 0 and wait
+		// for a presence check while your opponent reloads.
+		//
+		// At stage 2, the game is on, and you're not listening
+		// for handshake info anymore.
+
+		if ( challenger ) {
+			var p1 = user_name;
+			var p2 = opponent;
+		} else {
+			var p1 = opponent;
+			var p2 = user_name;
+		}
+		game_stats = {
+			'challenger': p1,
+			'challengee': p2,
+			'quote': quotenum					
+		}
+
+		presence_check = { 'presence': true }
+		opponent_channel.trigger('presence_check', presence_check); // I'm here!
+
+		self_channel.bind('presence_check', function(data) {
+			if ( stage === 0 ) {
+				// as soon as the opponent is here, send game stats and stop listening for their game stats
+				opponent_channel.trigger('game_stats', game_stats);
+			}
+			stage = 1
+		});
+
+		self_channel.bind('game_stats', function(data) {
+			if ( stage === 0 ) {
+				if ( data.challenger === p1 && data.challengee === p2 && data.quote === quotenum ) {
+					// say 'all checks out', and start the game
+					var time_now = new Date();
+					var start_time = time_now.getTime() + 5000;
+					confirmation = { 'success': true, 'start_time': start_time }
+					opponent_channel.trigger('confirmation', confirmation);
+					stage = 2;
+					// start game
+					kill_let(waiting_text);
+					start_countdown(start_time);
+				} else {
+					// say 'oops, not quite', and redirect to the proper game page
+					if ( data.challenger !== p1 || data.challengee !== p2 ) {
+						challenger = !challenger;
+					}
+					confirmation = { 'success': false }
+					opponent_channel.trigger('confirmation', confirmation);
+					if ( challenger ) {
+						var ch_string = "challengee";
+					} else {
+						var ch_string = "challenger";
+					}
+					window.location.href = '/game?quote=' + data.quote + '&' + ch_string + '=' + opponent;
+				}
+			}
+		});
+
+		self_channel.bind('confirmation', function(data) {
+			if ( stage === 1 ) {
+				if ( data.success ) {
+					stage = 2;
+					kill_let(waiting_text);
+					start_countdown(data.start_time);
+					// start game
+				} else {
+					// go back to listening for presence while the other person reloads
+					stage = 0;
+				}
+			}
+		});
+
+		// Display opponent's wpm and add names to wpm displays //
+
+		
+
+		opponent_wpm_display = false;
+		self_channel.bind('game_update', function(data) {
+			opponent_wpm = data.wpm;
+			if ( opponent_wpm_display ) {
+				update_opponent_wpm(opponent_wpm);
+			} else {
+				opponent_wpm_display = display_opponent_wpm(opponent_wpm);
+			}
+		});
+
+	} else {
+		start = { 'start': true }
+		self_channel.trigger('start', start);
+	}
 	    
 
 
 	// Doing stuff
-
-	coords = coord_maker(quote); //declared above	
-	draw_sentence(quote);
-	place_supplement(attr, "attribution");
-	if ( $("#reload").html() == "true" ) {
-		$(".showable").show();
-		$("#typing-box").hide();
-	}
+	self_channel.bind('start', function(data) {
+		coords = coord_maker(quote); //declared above	
+		draw_sentence(quote);
+		display_wpm_names();
+		place_supplement(attr, "attribution");
+		if ( $("#reload").html() == "true" ) {
+			$(".showable").show();
+			$("#typing-box").hide();
+		}
+	});
 }
 
-
+//// Trigger everything ////
 
 var start = function() {
 	console.log( $("#page_name").html() );
@@ -924,10 +1152,21 @@ dispatcher.bind('update_users', function(data) {
 var display_users = function() {
 	console.log("Users: " + user_list)
 	display_str = "";
+	self_pos = 0;
+	for ( i = 0; i < user_list.length; i++ ) {
+		if ( user_list[i] === user_name ) {
+			user_list = user_list.splice(i-1, 1);
+			break;
+		}
+	}
 	for (i = 0; i < user_list.length - 1; i++ ) {
+		console.log("Online user: ", user_list[i]);
 		display_str += '<div class="user">' + user_list[i] + '</div><hr>';
 	}
 	display_str += '<div class="user">' + user_list[user_list.length-1] + '</div>';
+	if ( display_str === "" ) {
+		display_str += '<div>Nobody :(</div>';
+	}
 	$("#user-list").html(display_str);
 	$(".user").on('click', function(){
 		console.log("click!");
@@ -938,14 +1177,18 @@ var display_users = function() {
 }
 
 $("#users-header").on('click', function() {
+	$("#users-header").toggle();
 	$("#user-list").toggle();
 	$("#users-hidden").toggle();
-	if( $("#users-hidden").is(":visible") ) {
-		$("#users-online").css("opacity", 0.4);
-	} else {
-		$("#users-online").css("opacity", 1);
-	}
-})
+});
+
+$("#users-hidden").on('click', function() {
+	$("#users-header").toggle();
+	$("#user-list").toggle();
+	$("#users-hidden").toggle();
+});
+
+
 
 //// CHALLENGE ANOTHER USER ////
 
