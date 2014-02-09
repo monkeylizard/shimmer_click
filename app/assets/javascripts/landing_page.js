@@ -1278,7 +1278,7 @@ if ( typeof user_name !== 'string' ) {
 	user_name = "anonymous";
 	var anonymous = true;
 }
-var dispatcher = new WebSocketRails('localhost:3000/websocket');
+var dispatcher = new WebSocketRails('shimmer-click-dev.herokuapp.com/websocket');
 var self_channel = dispatcher.subscribe(user_name);
 var user_list = [];
 
