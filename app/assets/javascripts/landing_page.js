@@ -7,16 +7,32 @@ var landing_script = function() {
 		var numquotes = parseInt($("#numquotes").html());
 		var snippets = [];
 		var attributions = [];
-		for ( i = 0; i < numquotes; i ++ ) {
-			quote = $("#quote" + i).html();
-			if ( quote.length > 140 ) {
-				quote = quote.substring(0,70) + "...";
+
+		var clip_snippet = function(quote) {
+			var clip = 100;
+			for ( j = 100; j > 0; j-- ) {
+				if ( quote[j] === " " ) {
+					clip = j;
+					break;
+				}
 			}
+			snippet = quote.substring(0,clip);
+			return snippet;
+		}
+
+		console.log(numquotes, "quotes");
+		for ( i = 0; i < numquotes; i ++ ) {
+			console.log(i);
+			quote = $("#quote" + i).html();
+			quote = clip_snippet(quote) + "...";
 			attribution = $("#attr" + i).html();
+			console.log(quote);
 
 			snippets.push(quote);
 			attributions.push(attribution);
 		}
+
+
 
 		var buf = 50;
 		var isMobile = false;
@@ -280,8 +296,9 @@ var landing_script = function() {
 		return aaa;
 	}
 
-	var iterate = rand_int(0, snippets.length-1);
+	var iterate = rand_int(0, snippets.length);
 	mark_time();
+	console.log(snippets);
 
 	var cycle = function () {
 		console.log("cycling", iterate);
@@ -492,6 +509,7 @@ var highscore_script = function() {
 	}
 
 	var colorify = function(typed_str) {
+
 	    if ( typed_matches(typed_str) ) {
 			for ( i = 0; i < typed_str.length; i++ ) {
 				if ( !filled_in[i] ) {
@@ -499,15 +517,31 @@ var highscore_script = function() {
 			    	filled_in[i] = true;
 				}
 			}
+
+			if ( deleting ) {
+				kill_errors(typed_str.length);
+				deleting -= 1;
+			}
+	    
 	    } else {
 			err = first_error(typed_str);
 			for ( i = err; i < typed_str.length; i++ ) {
 		    	if ( !(get_let("W" + i.toString())) ) {
 					//console.log("BAD", i, typed_str[i], coords(i), "W" + i.toString() );
 					wrong_let(typed_str[i], coords(i), "W" + i.toString() );
+					deleting += 1;
 		    	}
 			}
 	    }
+	}
+
+	var kill_errors = function(position) {
+		for ( i = 0; i < position; i++ ) {
+			err_let = get_let("W" + i.toString());
+			if ( err_let ) {
+				kill_let(err_let);
+			}
+		}
 	}
 
 	var last_typed;	
@@ -569,6 +603,8 @@ var highscore_script = function() {
 	
 	// function bound to keyup event
 	dbl_space = false;
+	var deleting = 0;
+
 	var typing_check = function() {
 	    var timer = $("#timer");
 	    var box = $("#typing-box");
@@ -590,6 +626,7 @@ var highscore_script = function() {
 	    
 	    if ( box_len < last_length && !is_complete() ) {
 			clear_extra();
+			deleting = true;
 	    }
 	    if ( box_len - last_length > 10 ) {
 	    	box.val(last_typed);
