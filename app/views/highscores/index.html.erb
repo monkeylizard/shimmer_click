@@ -37,7 +37,7 @@
               <td class="stamp"><%= highscore.name %></td>
             <% end %>
             <td class="stamp"><%= highscore.score %> WPM</td>
-            <% if highscore.victory %>
+            <% if highscore.victory && highscore.victory != 0 %>
               <% victory_result = highscore.victory == 1 ? "(won)" : "(lost)" %>
             <% end %>
             <% if highscore.opponent_name %>
