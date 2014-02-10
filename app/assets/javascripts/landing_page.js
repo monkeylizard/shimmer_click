@@ -1374,7 +1374,7 @@ if ( typeof user_name !== 'string' ) {
 }
 
 console.log(user_name);
-var dispatcher = new WebSocketRails('shimmer-click.herokuapp.com/websocket');
+var dispatcher = new WebSocketRails('shimmer-click.williamtimothysmith.com/websocket');
 var self_channel = dispatcher.subscribe(user_name);
 var user_list = [];
 
