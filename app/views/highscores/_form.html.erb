@@ -27,6 +27,14 @@
     <%= f.label :score %><br>
     <%= f.text_field :score %>
   </div>
+  <div class="form-group field hidden score-form">
+    <%= f.label :opponent_name %><br>
+    <%= f.text_field :opponent_name %>
+  </div>
+  <div class="form-group field hidden score-form">
+    <%= f.label :victory %><br>
+    <%= f.text_field :victory %>
+  </div>
   <div class="form-group field showable score-form" id="name">
     <%= f.label :name, { :class => "sr-only" } %>
     <%= f.text_field :name, { :class => "form-control", :placeholder => "Enter your name" } %>

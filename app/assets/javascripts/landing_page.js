@@ -371,6 +371,8 @@ var highscore_script = function() {
 		opponent_channel = dispatcher.subscribe(opponent);
 	}
 
+	console.log("multiplayer debug", multiplayer, opponent);
+
 	// set up the svg
 
 	var buf = 50;
@@ -454,6 +456,7 @@ var highscore_script = function() {
 	    	} else {
 	    		display_complete();
 	    		setTimeout(function() {
+	    			console.log("winner is", winner);
 	    			display_winner( winner );
 	    		}, 3000);
 	    	}
@@ -498,7 +501,6 @@ var highscore_script = function() {
 			}
 	    } else {
 			err = first_error(typed_str);
-			console.log("BADNESS", typed_str);
 			for ( i = err; i < typed_str.length; i++ ) {
 		    	if ( !(get_let("W" + i.toString())) ) {
 					//console.log("BAD", i, typed_str[i], coords(i), "W" + i.toString() );
@@ -571,27 +573,28 @@ var highscore_script = function() {
 	    var timer = $("#timer");
 	    var box = $("#typing-box");
 	    var box_str = box.val();
+	    var box_len = box_str.length
 	    if ( dbl_space ) {
 	    	box_str = sanitize(box_str);
 	    }
-		cursor = cursor_update(cursor, box_str.length);
+		cursor = cursor_update(cursor, box_len);
 		if ( multiplayer ) {
-			send_game_update(wpm().toFixed(1), box_str.length);
+			send_game_update(wpm().toFixed(1), box_len);
 		}
+		update_progress_bar("self-progress-bar", box_len);
 	    if ( timer.html() == "" ) {
 			timer.html(time());
 	    }
 	    
-	    if ( box_str.length < last_length && !is_complete() ) {
+	    if ( box_len < last_length && !is_complete() ) {
 			clear_extra();
 	    }
-	    if ( box_str.length - last_length > 10 ) {
+	    if ( box_len - last_length > 10 ) {
 	    	box.val(last_typed);
 	    }
 	    if ( !is_complete() ) {
 			box_stats();
 			if ( typed_matches() ) {
-				console.log("match");
 				colorify(box_str);
 				match_function(box_str);
 				//cursor = cursor_update(cursor, box.val().length);
@@ -607,7 +610,6 @@ var highscore_script = function() {
 					}
 				}
 
-				console.log("BAD!");
 				colorify(box_str);
 				match_function(box_str);
 				//console.log("no match");
@@ -905,6 +907,7 @@ var highscore_script = function() {
 	// Signal that the game is complete
 
 	var display_complete = function() {
+		opponent_info_fields();
 	    flash_color = "#00FBFF";
 	    complete_color = "#67008A"
 
@@ -947,7 +950,6 @@ var highscore_script = function() {
 				win_name = get_let("opponent_wpm_name");
 				win_spd = get_let("opponent-wpm-display");
 			}
-			console.log("Winner", win_name);
 			win_name.transition()
 			    .delay(1700)
 			    .duration(1000)
@@ -982,9 +984,7 @@ var highscore_script = function() {
 
 	var ready_submit = function() {
 	    spd = $("#speed").html() * 1;
-	    console.log(spd);
 	    $("#highscore_score").val(spd);
-	    console.log("showing...");
 	    $(".showable").show("slow");
 	}
 
@@ -1005,7 +1005,6 @@ var highscore_script = function() {
 	}
 
 	var countdown_number = function( number ) {
-		console.log(number);
 		id = "countdown" + number;
 		x = w/2 + 15
 		y = ( h / 3 );
@@ -1049,8 +1048,7 @@ var highscore_script = function() {
 		size = "2.5em";
 		color = "#E38DA1";
 	    y = buf + (numrows + 3) * spacing * 1.5;
-	    console.log("wpm y:", y);
-	    opponent_wpm_display = display_text(opponent_wpm, id, x, y, "Calibri", "bold", size, color);
+	    opponent_wpm_display = display_text(opponent_wpm + " WPM", id, x, y, "Calibri", "bold", size, color);
 	    return opponent_wpm_display
 	}
 
@@ -1067,16 +1065,13 @@ var highscore_script = function() {
 		color = "#E38DA1";
 		y1 = buf + (numrows + 2) * spacing * 1.3;
 		y2 = buf + (numrows + 3) * spacing * 1.5;
-		console.log("wpm name y's", y1, y2);
 		self_wpm_name = display_text(user_name, id1, x, y1, "Calibri", "bold", size, color, true);
 		opponent_wpm_name = display_text(opponent, id2, x, y2, "Calibri", "bold", size, color, true);
 	}
 
 	var opponent_complete = function(lost) {
-		console.log("opponent finished", lost);
 		oppo_name = get_let("opponent_wpm_name");
 		oppo_spd = get_let("opponent-wpm-display");
-		console.log("opponent name",oppo_name)
 		
 		if ( lost ) {
 			oppo_color = "#67008A";
@@ -1103,6 +1098,102 @@ var highscore_script = function() {
 		win_banner1 = display_text(winner, id, x, y, font, weight, size, color, "end");
 		win_banner2 = display_text("wins!", id, x + 15, y, font, weight, size, color, "start");
 		return [win_banner1, win_banner2];
+	}
+
+	var opponent_info_fields = function() {
+		if ( multiplayer ) {
+			$("#highscore_opponent_name").val(opponent);
+			if ( winner === user_name ) {
+				$("#highscore_victory").val(1);
+			} else {
+				$("#highscore_victory").val(2);
+			}
+		} else {
+			$("#highscore_opponent_name").val("Solo game");
+			$("#highscore_victory").val(0);
+		}
+	}
+
+	var opponent_progress_bar = function() {
+	    label = ".C" + rand_int(0, 8000);
+	    label2 = ".C" + rand_int(0, 8000);
+	    label3 = ".C" + rand_int(0, 8000);
+	    bar = svg.selectAll(label)
+	    		.data([1])
+	    		.enter()
+	    		.append('rect')
+	    		.attr("id", "opponent-progress-bar")
+	    		.attr("height", 5)
+	    		.attr("width", buf)
+	    		.attr("x", 0)
+	    		.attr("y", buf/4)
+	    		.attr("fill", "#C2FFE6")
+	    bar_label = svg.selectAll(label2)
+	    		.data([1])
+	    		.enter()
+	    		.append("text")
+	    		.text(opponent)
+	    		.attr("height", 5)
+	    		.attr("x", 0)
+	    		.attr("y", buf/4 + 10)
+	    		.attr("font-family", "Courier New")
+	    		.attr("fill", "#FFC2DB")
+	    bar_end = svg.selectAll(label3)
+	    		.data([1])
+	    		.enter()
+	    		.append("rect")
+	    		.attr("height", 5)
+	    		.attr("width", buf)
+	    		.attr("x", w-buf)
+	    		.attr("y", buf/4)
+	    		.attr("fill", "#FFC2DB")
+	    return bar;
+	}
+
+	var self_progress_bar = function() {
+	    label = ".C" + rand_int(0, 8000);
+	    label2 = ".C" + rand_int(0, 8000);
+	    label3 = ".C" + rand_int(0, 8000);
+	    bar = svg.selectAll(label)
+	    		.data([1])
+	    		.enter()
+	    		.append('rect')
+	    		.attr("id", "self-progress-bar")
+	    		.attr("height", 5)
+	    		.attr("width", buf)
+	    		.attr("x", 0)
+	    		.attr("y", buf/4 - 5)
+	    		.attr("fill", "#FFC2DB")
+	    bar_label = svg.selectAll(label2)
+	    		.data([1])
+	    		.enter()
+	    		.append("text")
+	    		.text(user_name)
+	    		.attr("height", 5)
+	    		.attr("width", buf)
+	    		.attr("x", 0)
+	    		.attr("y", buf/4 - 5)
+	    		.attr("font-family", "Courier New")
+	    		.attr("fill", "#C2FFE6")
+	    bar_end = svg.selectAll(label3)
+	    		.data([1])
+	    		.enter()
+	    		.append("rect")
+	    		.attr("height", 5)
+	    		.attr("width", buf)
+	    		.attr("x", w-buf)
+	    		.attr("y", buf/4 - 5)
+	    		.attr("fill", "#C2FFE6")
+	    return bar;
+	}
+
+	var update_progress_bar = function(bar, position) {
+		prog_bar = get_let(bar);
+		percent = position / quote.length;
+		new_width = (w - (2 * buf)) * percent + buf;
+		prog_bar.transition()
+			.duration(1)
+			.attr("width", new_width);
 	}
 
 	if ( multiplayer ) {
@@ -1209,6 +1300,7 @@ var highscore_script = function() {
 			} else {
 				opponent_wpm_display = display_opponent_wpm(opponent_wpm);
 			}
+			update_progress_bar("opponent-progress-bar", data.position);
 		});
 		var winner = false;
 
@@ -1220,16 +1312,14 @@ var highscore_script = function() {
 				opponent_complete(true);
 				setTimeout(function() {
 					display_winner(winner);
-				}, 3000);
+				}, 1000);
 			}
 		});
 
 	} else {
 		console.log('single player start');
 		start_cycle = setInterval(function() {
-			console.log('get start');
 			start_game = { 'start': true }
-			console.log("self channel", self_channel);
 			self_channel.trigger('start', start_game);
 			update_to(self_channel, "trying to start");
 		}, 500);
@@ -1249,7 +1339,11 @@ var highscore_script = function() {
 			coords = coord_maker(quote); //declared above
 			cursor = make_cursor(0); //declared above
 			draw_sentence(quote);
-			if ( multiplayer ) { display_wpm_names(); }
+			if ( multiplayer ) {
+				display_wpm_names();
+				oppo_progress_bar = opponent_progress_bar();
+				progress_bar = self_progress_bar();
+			}
 			place_supplement(attr, "attribution");
 			if ( $("#reload").html() == "true" ) {
 				$(".showable").show();
@@ -1365,8 +1459,9 @@ if ( !anonymous ) {
 
 	//// CHALLENGE ANOTHER USER ////
 
-
-	var opponent = false;
+	if (typeof opponent === 'undefined') {
+		var opponent = false;
+	}
 
 	var challenge_user = function(response) {
 		quotenum = response.quotenum

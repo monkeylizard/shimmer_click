@@ -13,6 +13,8 @@ class HighscoresController < ApplicationController
   # GET /highscores/1
   # GET /highscores/1.json
   def show
+    @users = User.order(:id)
+    @quotes = Quote.all
   end
 
   # GET /highscores/new
@@ -84,6 +86,6 @@ class HighscoresController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def highscore_params
-      params.require(:highscore).permit(:name, :score, :quote_attr, :quote_id)
+      params.require(:highscore).permit(:name, :score, :quote_attr, :quote_id, :opponent_name, :victory)
     end
 end

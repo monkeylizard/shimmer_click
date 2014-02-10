@@ -11,13 +11,14 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-9 col-md-offset-1">
+  <div class="col-md-12">
     <table class="table table-striped">
       <thead class="stamp">
         <tr>
           <th>Rank</th>
           <th>Name</th>
           <th>Score</th>
+          <th>Opponent (result) </th>
           <th>Quote</th>
           <th>Date</th>
         </tr>
@@ -36,6 +37,14 @@
               <td class="stamp"><%= highscore.name %></td>
             <% end %>
             <td class="stamp"><%= highscore.score %> WPM</td>
+            <% if highscore.victory %>
+              <% victory_result = highscore.victory == 1 ? "(won)" : "(lost)" %>
+            <% end %>
+            <% if highscore.opponent_name %>
+              <td class="stamp"><%= highscore.opponent_name %> <%= victory_result %></td>
+            <% else %>
+              <td class="stamp">Solo game</td>
+            <% end %>
             <td class="stamp"><%= link_to highscore.quote_attr, quote_path(highscore.quote_id) %></td>
             <% Time.zone = 'EST' %>
             <td class="stamp"><%= (highscore.created_at - 5.hours).in_time_zone.to_time.strftime('%A, %B %e, %l:%M %p') %></td>
