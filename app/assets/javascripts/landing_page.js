@@ -581,7 +581,9 @@ var highscore_script = function() {
 		if ( multiplayer ) {
 			send_game_update(wpm().toFixed(1), box_len);
 		}
-		update_progress_bar("self-progress-bar", box_len);
+		if ( multiplayer ) {
+			update_progress_bar("self-progress-bar", box_len);
+		}
 	    if ( timer.html() == "" ) {
 			timer.html(time());
 	    }
