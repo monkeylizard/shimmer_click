@@ -1349,6 +1349,7 @@ var highscore_script = function() {
 				$(".showable").show();
 				$("#typing-box").hide();
 			}
+			$("#users-header").trigger('click');
 		}
 	});
 }
@@ -1372,7 +1373,7 @@ if ( typeof user_name !== 'string' ) {
 	user_name = "anonymous";
 	var anonymous = true;
 }
-var dispatcher = new WebSocketRails('shimmer-click-dev.herokuapp.com/websocket');
+var dispatcher = new WebSocketRails('shimmer-click.herokuapp.com/websocket');
 var self_channel = dispatcher.subscribe(user_name);
 var user_list = [];
 
