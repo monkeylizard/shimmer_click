@@ -388,7 +388,7 @@ var highscore_script = function() {
 		opponent_channel = dispatcher.subscribe(opponent);
 	}
 
-	console.log("multiplayer debug", multiplayer, opponent);
+	//console.log("multiplayer debug", multiplayer, opponent);
 
 	// set up the svg
 
@@ -1058,8 +1058,8 @@ var highscore_script = function() {
 	var start_countdown = function( start_time ) {
 		countdown_text = display_text("Starting in . . . ", "countdown_text", w/2, h / 3, "Courier New", "bold", "2em", "#968775", "end");
 		time_now = new Date().getTime();
-		console.log("now: " + time_now);
-		console.log("start: " + start_time);
+		//console.log("now: " + time_now);
+		//console.log("start: " + start_time);
 		time_3 = start_time - 3000;
 		time_2 = start_time - 2000;
 		time_1 = start_time - 1000;
@@ -1068,7 +1068,7 @@ var highscore_script = function() {
 		for ( i = 0; i < times.length; i++ ) {
 			if ( times[i] - time_now > 0 ) {
 				setTimeout(function() { countdown_number(k); k -= 1; }, times[i] - time_now)
-				console.log(i + ": ", times[i] - time_now)
+				//console.log(i + ": ", times[i] - time_now)
 				k += 1;
 			}
 		}
@@ -1273,12 +1273,17 @@ var highscore_script = function() {
 			'quote': quotenum					
 		}
 
-		presence_check = { 'presence': true }
-		opponent_channel.trigger('presence_check', presence_check); // I'm here!
+		presence_loop = setInterval( function() {
+			console.log(user_name + ": I'm here!");
+			presence_check = { 'presence': true }
+			opponent_channel.trigger('presence_check', presence_check); // I'm here!	
+		}, 500);
 
 		self_channel.bind('presence_check', function(data) {
 			if ( stage === 0 ) {
 				// as soon as the opponent is here, send game stats and stop listening for their game stats
+				clearInterval(presence_loop);
+				console.log(opponent + ": I'm here!");
 				opponent_channel.trigger('game_stats', game_stats);
 			}
 			stage = 1
@@ -1288,6 +1293,7 @@ var highscore_script = function() {
 			if ( stage === 0 ) {
 				if ( data.challenger === p1 && data.challengee === p2 && data.quote === quotenum ) {
 					// say 'all checks out', and start the game
+					clearInterval(presence_loop);
 					var time_now = new Date();
 					var start_time = time_now.getTime() + 5000;
 					confirmation = { 'success': true, 'start_time': start_time }
@@ -1413,7 +1419,8 @@ if ( typeof user_name !== 'string' ) {
 }
 
 console.log(user_name);
-var dispatcher = new WebSocketRails('shimmer-click.williamtimothysmith.com/websocket');
+//var dispatcher = new WebSocketRails('shimmer-click.williamtimothysmith.com/websocket');
+var dispatcher = new WebSocketRails('localhost:3000/websocket');
 var self_channel = dispatcher.subscribe(user_name);
 var user_list = [];
 
@@ -1447,7 +1454,7 @@ var post = function(message) {
 if ( !anonymous ) {
 	dispatcher.bind('update_users', function(data) {
 		user_list = data.user_list;
-		console.log(user_list);
+		//console.log(user_list);
 		if (user_list[0]) {
 			display_users();
 		}
@@ -1457,16 +1464,16 @@ if ( !anonymous ) {
 		display_str = "";
 		self_pos = 0;
 		for ( i = 0; i < user_list.length; i++ ) {
-			console.log("clearing user list", i);
+			//console.log("clearing user list", i);
 			if ( user_list[i] === user_name ) {
 				user_list.splice(i, 1);
 				break;
 			} else {
-				console.log(user_list[i], user_name);
+				//console.log(user_list[i], user_name);
 			}
 		}
 		for (i = 0; i < user_list.length - 1; i++ ) {
-			console.log("Online user: ", user_list[i]);
+			//console.log("Online user: ", user_list[i]);
 			display_str += '<div class="user">' + user_list[i] + '</div><hr>';
 		}
 		if ( user_list[0] ) {
