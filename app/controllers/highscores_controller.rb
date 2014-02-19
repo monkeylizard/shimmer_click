@@ -20,6 +20,11 @@ class HighscoresController < ApplicationController
   # GET /highscores/new
   def new
     @logged_in = current_user.name if signed_in?
+    puts "#{current_user.name} began a game"
+    if params[:challenger] || params[:challengee]
+      puts "challenger: #{params[:challenger]}"
+      puts "challengee: #{params[:challengee]}"
+    end
     @quotes = Quote.all
     @highscore = Highscore.new
   end
@@ -86,6 +91,6 @@ class HighscoresController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def highscore_params
-      params.require(:highscore).permit(:name, :score, :quote_attr, :quote_id, :opponent_name, :victory)
+      params.require(:highscore).permit(:name, :score, :quote_attr, :quote_id, :opponent_name, :victory, :challenger, :challengee)
     end
 end
