@@ -1287,23 +1287,27 @@ var highscore_script = function() {
 				opponent_channel.trigger('game_stats', game_stats);
 			}
 			stage = 1
+			console.log("entering stage 1");
 		});
 
 		self_channel.bind('game_stats', function(data) {
 			if ( stage === 0 ) {
 				if ( data.challenger === p1 && data.challengee === p2 && data.quote === quotenum ) {
 					// say 'all checks out', and start the game
+					console.log("received game information; sending confirmation");
 					clearInterval(presence_loop);
 					var time_now = new Date();
 					var start_time = time_now.getTime() + 5000;
 					confirmation = { 'success': true, 'start_time': start_time }
 					opponent_channel.trigger('confirmation', confirmation);
 					stage = 2;
+					console.log("entering stage 2");
 					// start game
 					kill_let(waiting_text);
 					start_countdown(start_time);
 				} else {
 					// say 'oops, not quite', and redirect to the proper game page
+					console.log("received incorrect game information; redirecting");
 					if ( data.challenger !== p1 || data.challengee !== p2 ) {
 						challenger = !challenger;
 					}
@@ -1322,13 +1326,20 @@ var highscore_script = function() {
 		self_channel.bind('confirmation', function(data) {
 			if ( stage === 1 ) {
 				if ( data.success ) {
+					console.log("received confirmation; starting game");
 					stage = 2;
 					kill_let(waiting_text);
 					start_countdown(data.start_time);
 					// start game
 				} else {
+					console.log("received failure; returning to stage 0");
 					// go back to listening for presence while the other person reloads
 					stage = 0;
+					presence_loop = setInterval( function() {
+						console.log(user_name + ": I'm here!");
+						presence_check = { 'presence': true }
+						opponent_channel.trigger('presence_check', presence_check); // I'm here!	
+					}, 500);
 				}
 			}
 		});
