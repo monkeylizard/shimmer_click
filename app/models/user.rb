@@ -2,7 +2,8 @@ class User < ActiveRecord::Base
 	has_many :highscores, dependent: :destroy
 	before_create :create_remember_token
 	validates :name, presence: true, length: { maximum: 40 },
-		uniqueness: {case_sensitive: false }
+		uniqueness: { case_sensitive: false },
+		format: { without: /\s/, message: "cannot contain spaces" }
 	has_secure_password
 	validates :password, length: { minimum: 6 }
 

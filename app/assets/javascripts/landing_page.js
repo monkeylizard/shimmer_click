@@ -22,11 +22,11 @@ var landing_script = function() {
 
 		console.log(numquotes, "quotes");
 		for ( i = 0; i < numquotes; i ++ ) {
-			console.log(i);
+			//console.log(i);
 			quote = $("#quote" + i).html();
 			quote = clip_snippet(quote) + "...";
 			attribution = $("#attr" + i).html();
-			console.log(quote);
+			//console.log(quote);
 
 			snippets.push(quote);
 			attributions.push(attribution);
@@ -255,7 +255,6 @@ var landing_script = function() {
 	}
 
 	var show_kill = function(iterate) {
-		console.log("show_kill called");
 		display_bit(iterate);
 		setTimeout(function() { kill_bit(iterate); }, 10000);
 		return (iterate + 1) % snippets.length;
@@ -298,10 +297,10 @@ var landing_script = function() {
 
 	var iterate = rand_int(0, snippets.length);
 	mark_time();
-	console.log(snippets);
+	//console.log(snippets);
 
 	var cycle = function () {
-		console.log("cycling", iterate);
+		//console.log("cycling", iterate);
 		safety = $("#page_name").html();
 		if ( safety == "Home" ) {
 			itt = show_kill(iterate)
@@ -313,7 +312,7 @@ var landing_script = function() {
 
 	cycle();
 	setInterval(function() {
-		console.log("looping");
+		//console.log("looping");
 		cycle();
 	}, 11000);
 
@@ -1422,12 +1421,15 @@ var start = function() {
 }
 
 //// WEBSOCKETY STUFF FOR LIVE UPDATING ////
+
 var anonymous = false;
 if ( typeof user_name !== 'string' ) {
 	console.log("anon");
 	user_name = "anonymous";
 	var anonymous = true;
 }
+
+user_name = user_name;
 
 console.log(user_name);
 var dispatcher = new WebSocketRails('shimmer-click.williamtimothysmith.com/websocket');
@@ -1472,11 +1474,13 @@ if ( !anonymous ) {
 	});
 
 	var display_users = function() {
+		console.log("uncleared user list:");
+		console.log(user_list);
 		display_str = "";
 		self_pos = 0;
 		for ( i = 0; i < user_list.length; i++ ) {
-			//console.log("clearing user list", i);
-			if ( user_list[i] === user_name ) {
+			test_user = user_list[i];
+			if ( test_user === user_name ) {
 				user_list.splice(i, 1);
 				break;
 			} else {
@@ -1517,6 +1521,8 @@ if ( !anonymous ) {
 
 
 	//// CHALLENGE ANOTHER USER ////
+
+
 
 	if (typeof opponent === 'undefined') {
 		var opponent = false;
