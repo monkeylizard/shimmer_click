@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
 	before_create :create_remember_token
 	validates :name, presence: true, length: { maximum: 40 },
 		uniqueness: { case_sensitive: false },
-		format: { without: /\s/, message: "cannot contain spaces" }
+		format: { with: /\A[A-Za-z\d_]+\z/, message: "can only contain letters or numbers" }
 	has_secure_password
 	validates :password, length: { minimum: 6 }
 
