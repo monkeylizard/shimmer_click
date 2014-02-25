@@ -21,10 +21,10 @@ class HighscoresController < ApplicationController
   def new
     @logged_in = current_user.name if signed_in?
     puts "#{current_user.name} began a game"
-    if params[:challenger] || params[:challengee]
-      puts "challenger: #{params[:challenger]}"
-      puts "challengee: #{params[:challengee]}"
-    end
+#    if params[:challenger] || params[:challengee]
+#      puts "challenger: #{params[:challenger]}"
+#      puts "challengee: #{params[:challengee]}"
+ #   end
     @quotes = Quote.all
     @highscore = Highscore.new
   end
