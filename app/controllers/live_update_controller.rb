@@ -39,7 +39,7 @@ class LiveUpdateController < WebsocketRails::BaseController
 	end
 
 	def quotenum_request
-		numquotes = User.count
+		numquotes = Quote.count
 		quotenum = rand(1...numquotes)
 		if quotenum
 			quotenum_message = { :quotenum => quotenum }

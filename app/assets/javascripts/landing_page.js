@@ -1,3 +1,5 @@
+//var dispatch_str = 'shimmer-click.williamtimothysmith.com/websocket';
+var dispatch_str = 'localhost:3000/websocket'
 
 
 var landing_script = function() {
@@ -1432,8 +1434,9 @@ if ( typeof user_name !== 'string' ) {
 user_name = user_name;
 
 console.log(user_name);
-var dispatcher = new WebSocketRails('shimmer-click.williamtimothysmith.com/websocket');
+//var dispatcher = new WebSocketRails('shimmer-click.williamtimothysmith.com/websocket');
 //var dispatcher = new WebSocketRails('localhost:3000/websocket');
+var dispatcher = new WebSocketRails(dispatch_str);
 var self_channel = dispatcher.subscribe(user_name);
 var user_list = [];
 
