@@ -1,5 +1,5 @@
-//var dispatch_str = 'shimmer-click.williamtimothysmith.com/websocket';
-var dispatch_str = 'localhost:3000/websocket'
+var dispatch_str = 'shimmer-click.williamtimothysmith.com/websocket';
+//var dispatch_str = 'localhost:3000/websocket'
 
 
 var landing_script = function() {
