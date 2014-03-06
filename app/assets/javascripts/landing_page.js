@@ -1281,7 +1281,7 @@ var highscore_script = function() {
 		}, 500);
 
 		self_channel.bind('presence_check', function(data) {
-			if ( stage === 0 ) {
+			if ( stage === 0 && challenger) {
 				// as soon as the opponent is here, send game stats and stop listening for their game stats
 				clearInterval(presence_loop);
 				console.log(opponent + ": I'm here!");
@@ -1292,7 +1292,7 @@ var highscore_script = function() {
 		});
 
 		self_channel.bind('game_stats', function(data) {
-			if ( stage === 0 || stage === 1 ) {
+			if ( stage === 0 ) {
 				if ( data.challenger === p1 && data.challengee === p2 && data.quote === quotenum ) {
 					// say 'all checks out', and start the game
 					console.log("received game information; sending confirmation");
