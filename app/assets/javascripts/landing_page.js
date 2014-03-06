@@ -1,5 +1,5 @@
-var dispatch_str = 'shimmer-click.williamtimothysmith.com/websocket';
-//var dispatch_str = 'localhost:3000/websocket'
+//var dispatch_str = 'shimmer-click.williamtimothysmith.com/websocket';
+var dispatch_str = 'localhost:3000/websocket'
 
 
 var landing_script = function() {
@@ -1292,7 +1292,7 @@ var highscore_script = function() {
 		});
 
 		self_channel.bind('game_stats', function(data) {
-			if ( stage === 0 ) {
+			if ( stage === 0 || stage === 1 ) {
 				if ( data.challenger === p1 && data.challengee === p2 && data.quote === quotenum ) {
 					// say 'all checks out', and start the game
 					console.log("received game information; sending confirmation");
