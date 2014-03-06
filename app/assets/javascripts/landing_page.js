@@ -1268,11 +1268,7 @@ var highscore_script = function() {
 			var p1 = opponent;
 			var p2 = user_name;
 		}
-		game_stats = {
-			'challenger': p1,
-			'challengee': p2,
-			'quote': quotenum					
-		}
+		
 
 		presence_loop = setInterval( function() {
 			console.log(user_name + ": I'm here!");
@@ -1285,6 +1281,12 @@ var highscore_script = function() {
 				// as soon as the opponent is here, send game stats and stop listening for their game stats
 				clearInterval(presence_loop);
 				console.log(opponent + ": I'm here!");
+				game_stats = {
+					'challenger': p1,
+					'challengee': p2,
+					'quote': quotenum					
+				}
+				console.log("sending game stats", game_stats);
 				opponent_channel.trigger('game_stats', game_stats);
 			}
 			stage = 1
@@ -1292,6 +1294,7 @@ var highscore_script = function() {
 		});
 
 		self_channel.bind('game_stats', function(data) {
+			console.log("game stats event triggered");
 			if ( stage === 0 ) {
 				if ( data.challenger === p1 && data.challengee === p2 && data.quote === quotenum ) {
 					// say 'all checks out', and start the game
