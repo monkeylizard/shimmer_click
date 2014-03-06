@@ -1288,9 +1288,8 @@ var highscore_script = function() {
 				}
 				console.log("sending game stats", game_stats);
 				opponent_channel.trigger('game_stats', game_stats);
+				stage = 1
 			}
-			stage = 1
-			console.log("entering stage 1");
 		});
 
 		self_channel.bind('game_stats', function(data) {
