@@ -20,7 +20,9 @@ class HighscoresController < ApplicationController
   # GET /highscores/new
   def new
     @logged_in = current_user.name if signed_in?
-    puts "#{current_user.name} began a game"
+    if signed_in?
+      puts "#{current_user.name} began a game"
+    end
 #    if params[:challenger] || params[:challengee]
 #      puts "challenger: #{params[:challenger]}"
 #      puts "challengee: #{params[:challengee]}"
