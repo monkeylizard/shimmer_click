@@ -366,7 +366,9 @@ var highscore_script = function() {
   $("#highscore_quote_id").val(quotenum+1);
   console.log(quote, attr);
   
-  $("#typing-box").bind('keyup', function() {
+  typing_box = $('#typing-box')
+  typing_box.focus()
+  typing_box.bind('keyup', function() {
       typing_check();
   });
 
