@@ -1,1 +1,1 @@
-A multiplayer literary typing game. Play it at shimmer-click.williamtimothysmith.com
+A single player and multiplayer literary typing game. Play it [here](http://shimmer-click.herokuapp.com/).
